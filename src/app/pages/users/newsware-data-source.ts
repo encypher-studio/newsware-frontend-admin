@@ -1,38 +1,29 @@
 import {ServerDataSource} from 'ng2-smart-table';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {ServerSourceConf} from 'ng2-smart-table/lib/lib/data-source/server/server-source.conf';
-import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {from, Observable} from 'rxjs';
+import {ApiService} from '../../@core/services/api.service';
+import {GetUserFilter, GetUserRequest} from '../../@core/models/user';
+import {Pagination} from '../../@core/models/base';
 
 export class NewswareDataSource extends ServerDataSource {
-  constructor(protected http: HttpClient, private apiKey: string, conf: ServerSourceConf | {} = {}) {
-    conf = {
-      ... conf,
-      dataKey: 'data',
-    };
-    super(http, conf);
+  constructor(
+    protected http: HttpClient,
+    protected apiService: ApiService,
+  ) {
+    super(http, {endPoint: apiService.backendUrl, dataKey: 'data'});
   }
 
   protected requestElements(): Observable<any> {
-    const httpParams = this.createRequestParams();
-    return this.http.get(this.conf.endPoint, {
-      params: httpParams,
-      headers: {
-        'x-api-key': this.apiKey,
-      },
-      observe: 'response',
-    });
-  }
-
-  protected createRequestParams(): HttpParams {
-    const pagination = this.getPaginationObject();
-    const filter = this.getFilterObject();
+    const pagination = this.getPagination();
+    const req: GetUserRequest = this.getFilterObject();
     if (pagination) {
-      filter['pagination'] = pagination;
+      req.pagination = pagination;
     }
-    return new HttpParams().set('filter', JSON.stringify(filter));
+
+    return from(this.apiService.getUsers(req));
   }
 
-  protected getFilterObject(): object {
+  protected getFilterObject(): GetUserFilter {
     if (!this.filterConf.filters) return {};
 
     const filter = {};
@@ -45,11 +36,49 @@ export class NewswareDataSource extends ServerDataSource {
     return filter;
   }
 
-  protected getPaginationObject(): object {
+  protected getPagination(): Pagination {
     if (!this.pagingConf || !this.pagingConf['page']) return {page: 1, limit: 10};
     return {
       page: this.pagingConf['page'],
       limit: this.pagingConf['perPage'],
     };
+  }
+
+  add(element: any): Promise<any> {
+    return Promise.resolve();
+  }
+
+  async onCreateConfirm(event) {
+    if (window.confirm('Are you sure you want to create?')) {
+      await this.apiService.saveUser({
+        name: event.newData['name'],
+        email: event.newData['email'],
+      });
+      event.confirm.resolve(event.newData);
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  async onEditConfirm(event) {
+    if (window.confirm('Are you sure you want to save?')) {
+      await this.apiService.saveUser({
+        id: event.newData['id'] ? event.newData['id'] : null,
+        name: event.newData['name'],
+        email: event.newData['email'],
+      });
+      event.confirm.resolve(event.newData);
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  async onDeleteConfirm(event) {
+    if (window.confirm('Are you sure you want to delete?')) {
+      await this.apiService.deleteUser(event.data['id']);
+      event.confirm.resolve();
+    } else {
+      event.confirm.reject();
+    }
   }
 }

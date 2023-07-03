@@ -4,6 +4,7 @@ import {SmartTableData} from '../../@core/data/smart-table';
 import {environment} from '../../../environments/environment';
 import {NewswareDataSource} from './newsware-data-source';
 import {HttpClient} from '@angular/common/http';
+import {ApiService} from '../../@core/services/api.service';
 
 @Component({
   selector: 'ngx-users',
@@ -16,11 +17,13 @@ export class UsersComponent {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
+      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
+      confirmSave: true,
     },
     delete: {
       deleteButtonContent: '<i class="nb-trash"></i>',
@@ -30,38 +33,36 @@ export class UsersComponent {
       id: {
         title: 'ID',
         type: 'number',
+        editable: false,
+        sort: false,
+        addable: false,
       },
       name: {
         title: 'Name',
         type: 'string',
+        sort: false,
       },
       email: {
         title: 'E-mail',
         type: 'string',
+        sort: false,
       },
       apikey: {
         title: 'Apikey',
         type: 'string',
+        editable: false,
+        sort: false,
+        filter: false,
+        addable: false,
       },
     },
   };
 
-  source: ServerDataSource;
+  source: NewswareDataSource;
 
-  constructor(private service: SmartTableData, private http: HttpClient) {
-    this.source = new NewswareDataSource(http, '568f5d4d-d6ad-4250-b187-2d6179f05786', {
-      endPoint: environment.backendUrl + '/v1/api/admin/users',
-      filterFieldKey: '',
-    });
+  constructor(private service: SmartTableData, private http: HttpClient, private apiService: ApiService) {
+    this.source = new NewswareDataSource(http, apiService);
     const data = this.service.getData();
     this.source.load(data);
-  }
-
-  onDeleteConfirm(event): void {
-    if (window.confirm('Are you sure you want to delete?')) {
-      event.confirm.resolve();
-    } else {
-      event.confirm.reject();
-    }
   }
 }
