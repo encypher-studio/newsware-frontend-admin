@@ -7,6 +7,31 @@
 
   ::ng-deep {
     ng2-smart-table {
+      .deactivate {
+        .activate-icon {
+          display: none;
+        }
+        .deactivate-icon:hover {
+          color: #a94442;
+        }
+      }
+      .activate {
+        .deactivate-icon {
+          display: none;
+        }
+        .activate-icon:hover {
+            color: #009933;
+        }
+      }
+      .ng2-smart-actions ng2-st-tbody-edit-delete, .ng2-smart-actions a.ng2-smart-action {
+        height: auto;
+
+        .custom-action {
+          font-size: .5em !important;
+        }
+
+      }
+
       .form-control {
         background-color: nb-theme(input-basic-background-color);
         border-color: nb-theme(input-basic-border-color);
@@ -47,4 +72,5 @@
       }
     }
   }
+
 }

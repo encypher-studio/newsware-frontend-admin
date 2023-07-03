@@ -4,6 +4,7 @@ import {from, Observable} from 'rxjs';
 import {ApiService} from '../../@core/services/api.service';
 import {GetUserFilter, GetUserRequest} from '../../@core/models/user';
 import {Pagination} from '../../@core/models/base';
+import {User} from '../../@core/data/users';
 
 export class NewswareDataSource extends ServerDataSource {
   constructor(
@@ -76,9 +77,36 @@ export class NewswareDataSource extends ServerDataSource {
   async onDeleteConfirm(event) {
     if (window.confirm('Are you sure you want to delete?')) {
       await this.apiService.deleteUser(event.data['id']);
+      event.data.apikey = '';
       event.confirm.resolve();
     } else {
       event.confirm.reject();
     }
+  }
+
+  async onCustomAction(event) {
+    console.log(event);
+    switch (event.action) {
+      case 'deactivate':
+        await this.apiService.deleteApikey(event.data.id);
+        event.data.apikey = '';
+        break;
+      case 'activate':
+        const response = await this.apiService.putApikey(event.data.id);
+        event.data.apikey = response.body['data'];
+        break;
+    }
+    console.log(event.data);
+    this.replaceData(event.data);
+  }
+
+  replaceData(data) {
+    for (let i = 0; i < this.data.length; i ++) {
+      if (this.data[i].id === data.id) {
+        this.data[i].id = data;
+        break;
+      }
+    }
+    this.load(this.data);
   }
 }
