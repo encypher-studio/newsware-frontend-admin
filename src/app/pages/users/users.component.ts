@@ -5,6 +5,7 @@ import {environment} from '../../../environments/environment';
 import {NewswareDataSource} from './newsware-data-source';
 import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'ngx-users',
@@ -13,6 +14,18 @@ import {ApiService} from '../../@core/services/api.service';
 })
 export class UsersComponent {
   settings = {
+    actions: {
+      custom: [
+        {
+          name: 'activate',
+          title: '<span class="custom-action activate-icon">Activate</span>',
+        },
+        {
+          name: 'deactivate',
+          title: '<span class="custom-action deactivate-icon">Deactivate</span>',
+        },
+      ],
+    },
     add: {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
@@ -56,11 +69,22 @@ export class UsersComponent {
         addable: false,
       },
     },
+    rowClassFunction: (row) => {
+      if (!row.data.apikey) {
+        return 'activate';
+      } else {
+        return 'deactivate';
+      }
+    },
   };
 
   source: NewswareDataSource;
 
-  constructor(private service: SmartTableData, private http: HttpClient, private apiService: ApiService) {
+  constructor(
+    private service: SmartTableData,
+    private http: HttpClient,
+    private apiService: ApiService,
+  ) {
     this.source = new NewswareDataSource(http, apiService);
     const data = this.service.getData();
     this.source.load(data);

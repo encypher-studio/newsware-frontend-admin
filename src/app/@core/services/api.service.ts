@@ -30,6 +30,16 @@ export class ApiService {
     });
   }
 
+  async deleteApikey(userId: number) {
+    await this.delete('/v1/api/admin/apikey', {
+      userId,
+    });
+  }
+
+  async putApikey(userId: number) {
+    return await this.put('/v1/api/admin/apikey', {userId});
+  }
+
   get(relativeUrl: string, params?: object) {
     let httpParams = new HttpParams();
     if (params) {
