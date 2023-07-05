@@ -17,12 +17,16 @@ export class PagesComponent {
 
   menu = MENU_ITEMS;
 
-  constructor(authService: AuthService) {
+  constructor(private authService: AuthService) {
     authService.changedAuthStateEvent.subscribe(() => {
-      console.log('triggered');
-      const isSignedIn = authService.isSignedIn();
-      this.menu[1].hidden = isSignedIn;
-      this.menu[2].hidden = !isSignedIn;
+      this.toggleSignInOut();
     });
+    this.toggleSignInOut();
+  }
+
+  toggleSignInOut() {
+    const isSignedIn = this.authService.isSignedIn();
+    this.menu[1].hidden = isSignedIn;
+    this.menu[2].hidden = !isSignedIn;
   }
 }
