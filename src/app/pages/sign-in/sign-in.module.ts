@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
-import {NbButtonModule, NbCardModule, NbIconModule, NbInputModule, NbTreeGridModule} from '@nebular/theme';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
+import {NgModule} from '@angular/core';
+import {NbButtonModule, NbCardModule, NbInputModule} from '@nebular/theme';
 
-import { ThemeModule } from '../../@theme/theme.module';
+import {ThemeModule} from '../../@theme/theme.module';
 import {SignInComponent} from './sign-in.component';
 import {FormsModule} from '@angular/forms';
 

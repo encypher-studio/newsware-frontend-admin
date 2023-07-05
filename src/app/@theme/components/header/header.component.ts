@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
-import { map, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NbMenuService, NbSidebarService, NbThemeService} from '@nebular/theme';
+import {map, takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {AuthService} from '../../../@core/services/auth.service';
 
 @Component({

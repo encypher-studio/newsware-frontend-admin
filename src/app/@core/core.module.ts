@@ -1,8 +1,8 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
+import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {NbAuthModule} from '@nebular/auth';
 
-import { throwIfAlreadyLoaded } from './module-import-guard';
+import {throwIfAlreadyLoaded} from './module-import-guard';
 import {ApiService} from './services/api.service';
 import {AuthService} from './services/auth.service';
 import {LoginActivateGuard} from './guards/login-activate.guard';
