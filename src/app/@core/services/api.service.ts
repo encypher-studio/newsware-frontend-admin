@@ -1,6 +1,6 @@
 import {HttpClient, HttpErrorResponse, HttpParams, HttpResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {GetUserRequest, SaveUserRequest} from '../models/user';
+import {GetUserRequest, SaveUserRequest, User} from '../models/user';
 import {Injectable} from '@angular/core';
 
 @Injectable({
@@ -40,7 +40,7 @@ export class ApiService {
     return await this.put<string>('/v1/api/admin/apikey', {userId});
   }
 
-  async getUserByApiKey(apikey: number) {
+  async getUserByApiKey(apikey: number): Promise<User> {
     return await this.get('/v1/api/user/apikey', {apikey}, false);
   }
 

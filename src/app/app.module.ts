@@ -20,9 +20,10 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
+import {SignOutComponent} from './pages/sign-out/sign-out.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, SignOutComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
