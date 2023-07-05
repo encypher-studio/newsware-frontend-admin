@@ -1,10 +1,8 @@
 import {ServerDataSource} from 'ng2-smart-table';
 import {HttpClient} from '@angular/common/http';
-import {from, Observable} from 'rxjs';
 import {ApiService} from '../../@core/services/api.service';
 import {GetUserFilter, GetUserRequest} from '../../@core/models/user';
 import {Pagination} from '../../@core/models/base';
-import {User} from '../../@core/data/users';
 
 export class NewswareDataSource extends ServerDataSource {
   constructor(
@@ -14,14 +12,14 @@ export class NewswareDataSource extends ServerDataSource {
     super(http, {endPoint: apiService.backendUrl, dataKey: 'data'});
   }
 
-  protected requestElements(): Observable<any> {
+  getElements(): Promise<any> {
     const pagination = this.getPagination();
     const req: GetUserRequest = this.getFilterObject();
     if (pagination) {
       req.pagination = pagination;
     }
 
-    return from(this.apiService.getUsers(req));
+    return this.apiService.getUsers(req);
   }
 
   protected getFilterObject(): GetUserFilter {
@@ -68,6 +66,7 @@ export class NewswareDataSource extends ServerDataSource {
         name: event.newData['name'],
         email: event.newData['email'],
       });
+      this.replaceData(event.newData);
       event.confirm.resolve(event.newData);
     } else {
       event.confirm.reject();
@@ -92,8 +91,7 @@ export class NewswareDataSource extends ServerDataSource {
         event.data.apikey = '';
         break;
       case 'activate':
-        const response = await this.apiService.putApikey(event.data.id);
-        event.data.apikey = response.body['data'];
+        event.data.apikey = await this.apiService.putApikey(event.data.id);
         break;
     }
     console.log(event.data);
