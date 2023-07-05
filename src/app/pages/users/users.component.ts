@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
-import {LocalDataSource, ServerDataSource} from 'ng2-smart-table';
-import {SmartTableData} from '../../@core/data/smart-table';
-import {environment} from '../../../environments/environment';
 import {NewswareDataSource} from './newsware-data-source';
 import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'ngx-users',
@@ -81,12 +77,9 @@ export class UsersComponent {
   source: NewswareDataSource;
 
   constructor(
-    private service: SmartTableData,
     private http: HttpClient,
     private apiService: ApiService,
   ) {
     this.source = new NewswareDataSource(http, apiService);
-    const data = this.service.getData();
-    this.source.load(data);
   }
 }

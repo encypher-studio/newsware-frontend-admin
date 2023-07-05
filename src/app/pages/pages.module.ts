@@ -4,16 +4,16 @@ import { NbMenuModule } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { PagesComponent } from './pages.component';
 import { PagesRoutingModule } from './pages-routing.module';
-import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 import {UsersModule} from './users/users.module';
+import {SignInModule} from './sign-in/sign-in.module';
 
 @NgModule({
   imports: [
     PagesRoutingModule,
     ThemeModule,
     NbMenuModule,
-    MiscellaneousModule,
     UsersModule,
+    SignInModule,
   ],
   declarations: [
     PagesComponent,

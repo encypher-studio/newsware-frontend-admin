@@ -1,4 +1,4 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpParams, HttpResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {GetUserRequest, SaveUserRequest} from '../models/user';
 import {Injectable} from '@angular/core';
@@ -7,8 +7,8 @@ import {Injectable} from '@angular/core';
   providedIn: 'root',
 })
 export class ApiService {
-  public apiKey: string = '568f5d4d-d6ad-4250-b187-2d6179f05786';
   public backendUrl: string;
+  apikey: string = '';
 
   constructor(protected http: HttpClient) {
     this.backendUrl = environment.backendUrl;
@@ -36,48 +36,69 @@ export class ApiService {
     });
   }
 
-  async putApikey(userId: number) {
-    return await this.put('/v1/api/admin/apikey', {userId});
+  async putApikey(userId: number): Promise<string> {
+    return await this.put<string>('/v1/api/admin/apikey', {userId});
   }
 
-  get(relativeUrl: string, params?: object) {
+  async getUserByApiKey(apikey: number) {
+    return await this.get('/v1/api/user/apikey', {apikey}, false);
+  }
+
+  async get<T>(relativeUrl: string, params?: object, stringifyParams: boolean = true): Promise<T> {
+    let httpParams = new HttpParams();
+    if (params) {
+      for (const key of Object.keys(params)) {
+        httpParams = httpParams.set(key, stringifyParams ? JSON.stringify(params[key]) : params[key]);
+      }
+    }
+
+
+    return this.handleSuccess(
+      await this.http.get(`${this.backendUrl}${relativeUrl}`, {
+        params: httpParams,
+        headers: {
+          'x-api-key': this.apikey,
+        },
+        observe: 'response',
+      }).toPromise().catch(this.handleError),
+    );
+  }
+
+  async put<T>(relativeUrl: string, body?: object): Promise<T> {
+    return this.handleSuccess(
+      await this.http.put(`${this.backendUrl}${relativeUrl}`, body, {
+        headers: {
+          'x-api-key': this.apikey,
+        },
+        observe: 'response',
+      }).toPromise().catch(this.handleError),
+    );
+  }
+
+  async delete(relativeUrl: string, params?: object) {
     let httpParams = new HttpParams();
     if (params) {
       for (const key of Object.keys(params)) {
         httpParams = httpParams.set(key, JSON.stringify(params[key]));
       }
     }
-    return this.http.get(`${this.backendUrl}${relativeUrl}`, {
-      params: httpParams,
-      headers: {
-        'x-api-key': this.apiKey,
-      },
-      observe: 'response',
-    }).toPromise();
+    return this.handleSuccess(
+      await this.http.delete(`${this.backendUrl}${relativeUrl}`, {
+        params: httpParams,
+        headers: {
+          'x-api-key': this.apikey,
+        },
+        observe: 'response',
+      }).toPromise().catch(this.handleError),
+    );
   }
 
-  put(relativeUrl: string, body?: object) {
-    return this.http.put(`${this.backendUrl}${relativeUrl}`, body, {
-      headers: {
-        'x-api-key': this.apiKey,
-      },
-      observe: 'response',
-    }).toPromise();
+  handleSuccess<T>(response: HttpResponse<Object>): T {
+      return response.body['data'];
   }
 
-  delete(relativeUrl: string, params?: object) {
-    let httpParams = new HttpParams();
-    if (params) {
-      for (const key of Object.keys(params)) {
-        httpParams = httpParams.set(key, JSON.stringify(params[key]));
-      }
-    }
-    return this.http.delete(`${this.backendUrl}${relativeUrl}`, {
-      params: httpParams,
-      headers: {
-        'x-api-key': this.apiKey,
-      },
-      observe: 'response',
-    }).toPromise();
+  handleError(response: HttpErrorResponse): HttpResponse<Object> {
+    const errorMessage = response.error.error.message;
+    throw Error(errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1));
   }
 }
