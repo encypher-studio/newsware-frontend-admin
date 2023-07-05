@@ -7,6 +7,7 @@ import {
   NbLayoutModule,
   NbSidebarModule,
   NbThemeModule,
+  NbUserModule,
 } from '@nebular/theme';
 import {NbEvaIconsModule} from '@nebular/eva-icons';
 
@@ -24,6 +25,7 @@ const NB_MODULES = [
   NbButtonModule,
   NbIconModule,
   NbEvaIconsModule,
+  NbUserModule,
 ];
 const COMPONENTS = [
   HeaderComponent,

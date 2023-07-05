@@ -16,3 +16,11 @@ export interface SaveUserRequest {
   name: string;
   email: string;
 }
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  apikey: string;
+  roles: string[];
+}

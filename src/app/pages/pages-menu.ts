@@ -11,4 +11,10 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'lock-outline',
     link: '/pages/sign-in',
   },
+  {
+    title: 'Sign out',
+    icon: 'lock-outline',
+    link: '/pages/sign-out',
+    hidden: true,
+  },
 ];

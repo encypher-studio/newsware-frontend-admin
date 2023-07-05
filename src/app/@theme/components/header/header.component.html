@@ -9,9 +9,8 @@
 
 <div class="header-container">
   <nb-actions size="small">
-    <nb-action class="user-action" *nbIsGranted="['view', 'user']" >
-      <nb-user [nbContextMenu]="userMenu"
-               [name]="authService.user?.name">
+    <nb-action class="user-action">
+      <nb-user [name]="authService.user?.name">
       </nb-user>
     </nb-action>
   </nb-actions>
