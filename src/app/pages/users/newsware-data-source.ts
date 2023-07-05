@@ -3,11 +3,15 @@ import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
 import {GetUserFilter, GetUserRequest} from '../../@core/models/user';
 import {Pagination} from '../../@core/models/base';
+import {AuthService} from '../../@core/services/auth.service';
+import {NbToastrService} from '@nebular/theme';
 
 export class NewswareDataSource extends ServerDataSource {
   constructor(
     protected http: HttpClient,
     protected apiService: ApiService,
+    protected authService: AuthService,
+    private toastrService: NbToastrService,
   ) {
     super(http, {endPoint: apiService.backendUrl, dataKey: 'data'});
   }
@@ -84,9 +88,12 @@ export class NewswareDataSource extends ServerDataSource {
   }
 
   async onCustomAction(event) {
-    console.log(event);
     switch (event.action) {
       case 'deactivate':
+        if (this.authService.user.id === event.data.id) {
+          this.toastrService.danger('Can\'t deactivate yourself');
+          return;
+        }
         await this.apiService.deleteApikey(event.data.id);
         event.data.apikey = '';
         break;
@@ -94,7 +101,6 @@ export class NewswareDataSource extends ServerDataSource {
         event.data.apikey = await this.apiService.putApikey(event.data.id);
         break;
     }
-    console.log(event.data);
     this.replaceData(event.data);
   }
 
