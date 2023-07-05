@@ -1,69 +1,39 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {ModuleWithProviders, NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {
   NbActionsModule,
-  NbLayoutModule,
-  NbMenuModule,
-  NbSearchModule,
-  NbSidebarModule,
-  NbUserModule,
-  NbContextMenuModule,
   NbButtonModule,
-  NbSelectModule,
   NbIconModule,
+  NbLayoutModule,
+  NbSidebarModule,
   NbThemeModule,
 } from '@nebular/theme';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
+import {NbEvaIconsModule} from '@nebular/eva-icons';
 
-import {
-  HeaderComponent,
-} from './components';
-import {
-  CapitalizePipe,
-  RoundPipe,
-  TimingPipe,
-  NumberWithCommasPipe,
-} from './pipes';
-import {
-  OneColumnLayoutComponent,
-  ThreeColumnsLayoutComponent,
-  TwoColumnsLayoutComponent,
-} from './layouts';
-import { DEFAULT_THEME } from './styles/theme.default';
-import { COSMIC_THEME } from './styles/theme.cosmic';
-import { CORPORATE_THEME } from './styles/theme.corporate';
-import { DARK_THEME } from './styles/theme.dark';
+import {HeaderComponent} from './components';
+import {OneColumnLayoutComponent} from './layouts';
+import {DEFAULT_THEME} from './styles/theme.default';
+import {COSMIC_THEME} from './styles/theme.cosmic';
+import {CORPORATE_THEME} from './styles/theme.corporate';
+import {DARK_THEME} from './styles/theme.dark';
 
 const NB_MODULES = [
   NbLayoutModule,
-  NbMenuModule,
-  NbUserModule,
   NbActionsModule,
-  NbSearchModule,
   NbSidebarModule,
-  NbContextMenuModule,
   NbButtonModule,
-  NbSelectModule,
   NbIconModule,
   NbEvaIconsModule,
 ];
 const COMPONENTS = [
   HeaderComponent,
   OneColumnLayoutComponent,
-  ThreeColumnsLayoutComponent,
-  TwoColumnsLayoutComponent,
-];
-const PIPES = [
-  CapitalizePipe,
-  RoundPipe,
-  TimingPipe,
-  NumberWithCommasPipe,
 ];
 
 @NgModule({
   imports: [CommonModule, ...NB_MODULES],
-  exports: [CommonModule, ...PIPES, ...COMPONENTS],
-  declarations: [...COMPONENTS, ...PIPES],
+  exports: [CommonModule, ...COMPONENTS],
+  declarations: [...COMPONENTS],
 })
 export class ThemeModule {
   static forRoot(): ModuleWithProviders<ThemeModule> {

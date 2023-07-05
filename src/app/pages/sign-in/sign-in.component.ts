@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthService} from '../../@core/services/auth.service';
 import {NbToastrService} from '@nebular/theme';
 

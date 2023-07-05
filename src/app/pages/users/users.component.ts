@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {NewswareDataSource} from './newsware-data-source';
 import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
