@@ -17,13 +17,19 @@ export class NewswareDataSource extends ServerDataSource {
   }
 
   getElements(): Promise<any> {
+    return this.requestUsers();
+  }
+
+  async requestUsers(): Promise<any> {
     const pagination = this.getPagination();
     const req: GetUserRequest = this.getFilterObject();
     if (pagination) {
       req.pagination = pagination;
     }
 
-    return this.apiService.getUsers(req);
+    const res = await this.apiService.getUsers(req);
+    this.lastRequestCount = res.totalCount;
+    return res.data;
   }
 
   protected getFilterObject(): GetUserFilter {
@@ -40,7 +46,6 @@ export class NewswareDataSource extends ServerDataSource {
   }
 
   protected getPagination(): Pagination {
-    if (!this.pagingConf || !this.pagingConf['page']) return {page: 1, limit: 10};
     return {
       page: this.pagingConf['page'],
       limit: this.pagingConf['perPage'],
