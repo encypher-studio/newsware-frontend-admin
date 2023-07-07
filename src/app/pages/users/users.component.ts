@@ -76,7 +76,7 @@ export class UsersComponent {
     },
     pager: {
       display: true,
-      perPage: 1,
+      perPage: 10,
     },
   };
 
