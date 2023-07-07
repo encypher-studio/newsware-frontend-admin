@@ -14,8 +14,8 @@ export class ApiService {
     this.backendUrl = environment.backendUrl;
   }
 
-  async getUsers(req: GetUserRequest) {
-    return await this.get('/v1/api/admin/users', {
+  async getUsers(req: GetUserRequest): Promise<ApiResult<User[]>> {
+    return await this.get<User[]>('/v1/api/admin/users', {
       filter: req,
     });
   }
@@ -41,10 +41,10 @@ export class ApiService {
   }
 
   async getUserByApiKey(apikey: number): Promise<User> {
-    return await this.get('/v1/api/user/apikey', {apikey}, false);
+    return (await this.get<User>('/v1/api/user/apikey', {apikey}, false)).data;
   }
 
-  async get<T>(relativeUrl: string, params?: object, stringifyParams: boolean = true): Promise<T> {
+  async get<T>(relativeUrl: string, params?: object, stringifyParams: boolean = true): Promise<ApiResult<T>> {
     let httpParams = new HttpParams();
     if (params) {
       for (const key of Object.keys(params)) {
@@ -53,7 +53,7 @@ export class ApiService {
     }
 
 
-    return this.handleSuccess(
+    return this.handleSuccess<T>(
       await this.http.get(`${this.backendUrl}${relativeUrl}`, {
         params: httpParams,
         headers: {
@@ -65,14 +65,14 @@ export class ApiService {
   }
 
   async put<T>(relativeUrl: string, body?: object): Promise<T> {
-    return this.handleSuccess(
+    return this.handleSuccess<T>(
       await this.http.put(`${this.backendUrl}${relativeUrl}`, body, {
         headers: {
           'x-api-key': this.apikey,
         },
         observe: 'response',
       }).toPromise().catch(this.handleError),
-    );
+    ).data;
   }
 
   async delete(relativeUrl: string, params?: object) {
@@ -93,12 +93,20 @@ export class ApiService {
     );
   }
 
-  handleSuccess<T>(response: HttpResponse<Object>): T {
-      return response.body['data'];
+  handleSuccess<T>(response: HttpResponse<Object>): ApiResult<T> {
+    return {
+      data: response.body['data'],
+      totalCount: parseInt(response.headers.get('X-TOTAL-COUNT'), 10),
+    };
   }
 
   handleError(response: HttpErrorResponse): HttpResponse<Object> {
     const errorMessage = response.error.error.message;
     throw Error(errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1));
   }
+}
+
+export interface ApiResult<T> {
+  data: T;
+  totalCount?: number;
 }

@@ -74,6 +74,10 @@ export class UsersComponent {
         return 'deactivate';
       }
     },
+    pager: {
+      display: true,
+      perPage: 1,
+    },
   };
 
   source: NewswareDataSource;
