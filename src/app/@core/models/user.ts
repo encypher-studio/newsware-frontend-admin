@@ -22,5 +22,16 @@ export interface User {
   name: string;
   email: string;
   apikey: string;
-  roles: string[];
+  roles: Role[];
+}
+
+export interface Role {
+  id: number;
+  name: string;
+}
+
+export enum RoleId {
+  RoleAdmin = 1,
+  RoleClient,
+  roleLimit,
 }

@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {ApiService} from './api.service';
-import {User} from '../models/user';
+import {RoleId, User} from '../models/user';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {Router} from '@angular/router';
 
@@ -21,6 +21,9 @@ export class AuthService {
 
   async signIn(apiKey) {
     this.user = await this.apiService.getUserByApiKey(apiKey);
+    if (!this.isAdmin()) {
+      throw Error('Only admins can sign in');
+    }
     this.apiService.apikey = apiKey;
     localStorage.setItem('user', JSON.stringify(this.user));
     this.changedAuthStateEvent.next();
@@ -36,5 +39,12 @@ export class AuthService {
     this.apiService.apikey = '';
     this.changedAuthStateEvent.next();
     await this.router.navigate(['/sign-in']);
+  }
+
+  isAdmin() {
+    for (const role of this.user.roles) {
+      if (role.id === RoleId.RoleAdmin) return true;
+    }
+    return false;
   }
 }
