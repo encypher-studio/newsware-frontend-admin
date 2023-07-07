@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {NewswareDataSource} from './newsware-data-source';
 import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
+import {AuthService} from "../../@core/services/auth.service";
+import {NbToastrService} from "@nebular/theme";
 
 @Component({
   selector: 'ngx-users',
@@ -79,7 +81,9 @@ export class UsersComponent {
   constructor(
     private http: HttpClient,
     private apiService: ApiService,
+    private authService: AuthService,
+    private toastrService: NbToastrService,
   ) {
-    this.source = new NewswareDataSource(http, apiService);
+    this.source = new NewswareDataSource(http, apiService, authService, toastrService);
   }
 }
