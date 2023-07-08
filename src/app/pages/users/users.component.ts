@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
 import {AuthService} from "../../@core/services/auth.service";
 import {NbToastrService} from "@nebular/theme";
+import {Settings} from "angular2-smart-table";
 
 @Component({
   selector: 'ngx-users',
@@ -11,7 +12,7 @@ import {NbToastrService} from "@nebular/theme";
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent {
-  settings = {
+  settings: Settings = {
     actions: {
       custom: [
         {
@@ -43,28 +44,28 @@ export class UsersComponent {
     columns: {
       id: {
         title: 'ID',
-        type: 'number',
-        editable: false,
-        sort: false,
-        addable: false,
+        isEditable: false,
+        isSortable: false,
+        isAddable: false,
       },
       name: {
         title: 'Name',
-        type: 'string',
-        sort: false,
+        isEditable: true,
+        isSortable: false,
+        isAddable: true,
       },
       email: {
         title: 'E-mail',
-        type: 'string',
-        sort: false,
+        isEditable: true,
+        isSortable: false,
+        isAddable: true,
       },
       apikey: {
         title: 'Apikey',
-        type: 'string',
-        editable: false,
-        sort: false,
         filter: false,
-        addable: false,
+        isEditable: false,
+        isSortable: false,
+        isAddable: false,
       },
     },
     rowClassFunction: (row) => {

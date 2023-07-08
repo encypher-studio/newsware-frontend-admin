@@ -26,7 +26,7 @@ export class AuthService {
     }
     this.apiService.apikey = apiKey;
     localStorage.setItem('user', JSON.stringify(this.user));
-    this.changedAuthStateEvent.next();
+    this.changedAuthStateEvent.next(null);
     await this.router.navigate(['/users']);
   }
 
@@ -37,7 +37,8 @@ export class AuthService {
   async signOut() {
     localStorage.removeItem('user');
     this.apiService.apikey = '';
-    this.changedAuthStateEvent.next();
+    this.changedAuthStateEvent.next(null);
+    this.user = undefined;
     await this.router.navigate(['/sign-in']);
   }
 
