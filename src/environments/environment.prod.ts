@@ -5,5 +5,5 @@
  */
 export const environment = {
   production: true,
-  backendUrl: 'http://198.6.19.69',
+  backendUrl: 'https://198.6.19.69',
 };
