@@ -1,0 +1,16 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Angular Deploy gh-pages Actions
+        uses: AhsanAyaz/angular-deploy-gh-pages-actions@v1.4.0
+        with:
+          base_href: /newsware_frontend_admin
+          deploy_branch: gh-pages
+          angular_dist_build_folder: dist
