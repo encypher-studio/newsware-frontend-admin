@@ -4,7 +4,7 @@
   </nb-card-header>
 
   <nb-card-body>
-    <ng2-smart-table
+    <angular2-smart-table
       [settings]="settings"
       [source]="source"
       (deleteConfirm)="source.onDeleteConfirm($event)"
@@ -12,6 +12,6 @@
       (editConfirm)="source.onEditConfirm($event)"
       (custom)="source.onCustomAction($event)"
     >
-    </ng2-smart-table>
+    </angular2-smart-table>
   </nb-card-body>
 </nb-card>

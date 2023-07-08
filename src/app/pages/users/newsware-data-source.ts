@@ -1,10 +1,10 @@
-import {ServerDataSource} from 'ng2-smart-table';
 import {HttpClient} from '@angular/common/http';
 import {ApiService} from '../../@core/services/api.service';
 import {GetUserFilter, GetUserRequest} from '../../@core/models/user';
 import {Pagination} from '../../@core/models/base';
 import {AuthService} from '../../@core/services/auth.service';
 import {NbToastrService} from '@nebular/theme';
+import {ServerDataSource} from "angular2-smart-table";
 
 export class NewswareDataSource extends ServerDataSource {
   constructor(
@@ -38,7 +38,7 @@ export class NewswareDataSource extends ServerDataSource {
     const filter = {};
     this.filterConf.filters.forEach((fieldConf: any) => {
       if (fieldConf['search']) {
-        filter[fieldConf['field']] = fieldConf['search'];
+        filter[fieldConf['field']] = fieldConf['field'] == "id" ? parseInt(fieldConf['search']) : fieldConf['search'];
       }
     });
 
@@ -63,6 +63,7 @@ export class NewswareDataSource extends ServerDataSource {
         email: event.newData['email'],
       });
       event.confirm.resolve(event.newData);
+      this.toastrService.success("Created");
     } else {
       event.confirm.reject();
     }
@@ -76,7 +77,7 @@ export class NewswareDataSource extends ServerDataSource {
         email: event.newData['email'],
       });
       this.replaceData(event.newData);
-      event.confirm.resolve(event.newData);
+      this.toastrService.success("Edited");
     } else {
       event.confirm.reject();
     }
@@ -87,6 +88,7 @@ export class NewswareDataSource extends ServerDataSource {
       await this.apiService.deleteUser(event.data['id']);
       event.data.apikey = '';
       event.confirm.resolve();
+      this.toastrService.success("Deleted");
     } else {
       event.confirm.reject();
     }
@@ -100,10 +102,12 @@ export class NewswareDataSource extends ServerDataSource {
           return;
         }
         await this.apiService.deleteApikey(event.data.id);
+        this.toastrService.success("Deactivated");
         event.data.apikey = '';
         break;
       case 'activate':
         event.data.apikey = await this.apiService.putApikey(event.data.id);
+        this.toastrService.success("Activated");
         break;
     }
     this.replaceData(event.data);
