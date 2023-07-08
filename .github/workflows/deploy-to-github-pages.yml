@@ -14,3 +14,4 @@ jobs:
           base_href: /newsware_frontend_admin
           deploy_branch: gh-pages
           angular_dist_build_folder: dist
+          github_access_token: ${{ secrets.ACCESS_TOKEN }}
