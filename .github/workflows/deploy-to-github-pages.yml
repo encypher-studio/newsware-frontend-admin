@@ -11,7 +11,7 @@ jobs:
       - name: Angular Deploy gh-pages Actions
         uses: AhsanAyaz/angular-deploy-gh-pages-actions@v1.4.0
         with:
-          base_href: https://encypher-studio.github.io/newsware_frontend_admin/
+          base_href: https://admin.newsware.com/
           deploy_branch: gh-pages
           angular_dist_build_folder: dist
           github_access_token: ${{ secrets.ACCESS_TOKEN }}
