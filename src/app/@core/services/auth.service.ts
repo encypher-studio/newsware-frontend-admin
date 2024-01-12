@@ -1,7 +1,7 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
 import {RoleId, User} from '../models/user';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {Router} from '@angular/router';
 
 @Injectable({

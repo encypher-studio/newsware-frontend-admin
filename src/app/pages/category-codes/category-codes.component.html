@@ -1,0 +1,14 @@
+<nb-card>
+  <nb-card-header>
+    Users
+  </nb-card-header>
+
+  <nb-card-body>
+    <angular2-smart-table
+      [settings]="settings"
+      [source]="source"
+      (editConfirm)="source.onEditConfirm($event)"
+    >
+    </angular2-smart-table>
+  </nb-card-body>
+</nb-card>

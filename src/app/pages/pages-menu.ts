@@ -7,6 +7,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/users',
   },
   {
+    title: 'Category codes',
+    icon: 'keypad-outline',
+    link: '/pages/category-codes',
+  },
+  {
     title: 'Sign-in',
     icon: 'lock-outline',
     link: '/pages/sign-in',

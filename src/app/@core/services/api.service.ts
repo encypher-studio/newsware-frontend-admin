@@ -2,46 +2,57 @@ import {HttpClient, HttpErrorResponse, HttpParams, HttpResponse} from '@angular/
 import {environment} from '../../../environments/environment';
 import {GetUserRequest, SaveUserRequest, User} from '../models/user';
 import {Injectable} from '@angular/core';
+import {CategoryCode, PutCategoryCodeRequest} from "../models/category-code";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
   public backendUrl: string;
+  restEndpoint: string
   apikey: string = '';
 
   constructor(protected http: HttpClient) {
     this.backendUrl = environment.backendUrl;
+    this.restEndpoint = environment.backendUrl + "/api/v3"
+  }
+
+  async getCategoryCodes(): Promise<ApiResult<CategoryCode[]>> {
+    return await this.get<CategoryCode[]>('/category-codes');
+  }
+
+  async putCategoryCode(req: PutCategoryCodeRequest) {
+    await this.put('/category-codes', req);
   }
 
   async getUsers(req: GetUserRequest): Promise<ApiResult<User[]>> {
-    return await this.get<User[]>('/v1/api/admin/users', {
+    return await this.get<User[]>('/admin/users', {
       filter: req,
     });
   }
 
   async saveUser(req: SaveUserRequest) {
-    await this.put('/v1/api/admin/user', req);
+    await this.put('/admin/user', req);
   }
 
   async deleteUser(userId: number) {
-    await this.delete('/v1/api/admin/user', {
+    await this.delete('/admin/user', {
       userId,
     });
   }
 
   async deleteApikey(userId: number) {
-    await this.delete('/v1/api/admin/apikey', {
+    await this.delete('/admin/apikey', {
       userId,
     });
   }
 
   async putApikey(userId: number): Promise<string> {
-    return await this.put<string>('/v1/api/admin/apikey', {userId});
+    return await this.put<string>('/admin/apikey', {userId});
   }
 
   async getUserByApiKey(apikey: number): Promise<User> {
-    return (await this.get<User>('/v1/api/user/apikey', {apikey}, false)).data;
+    return (await this.get<User>('/user/apikey', {apikey}, false)).data;
   }
 
   async get<T>(relativeUrl: string, params?: object, stringifyParams: boolean = true): Promise<ApiResult<T>> {
@@ -54,7 +65,7 @@ export class ApiService {
 
 
     return this.handleSuccess<T>(
-      await this.http.get(`${this.backendUrl}${relativeUrl}`, {
+      await this.http.get(`${this.restEndpoint}${relativeUrl}`, {
         params: httpParams,
         headers: {
           'x-api-key': this.apikey,
@@ -66,7 +77,7 @@ export class ApiService {
 
   async put<T>(relativeUrl: string, body?: object): Promise<T> {
     return this.handleSuccess<T>(
-      await this.http.put(`${this.backendUrl}${relativeUrl}`, body, {
+      await this.http.put(`${this.restEndpoint}${relativeUrl}`, body, {
         headers: {
           'x-api-key': this.apikey,
         },
@@ -83,7 +94,7 @@ export class ApiService {
       }
     }
     return this.handleSuccess(
-      await this.http.delete(`${this.backendUrl}${relativeUrl}`, {
+      await this.http.delete(`${this.restEndpoint}${relativeUrl}`, {
         params: httpParams,
         headers: {
           'x-api-key': this.apikey,
