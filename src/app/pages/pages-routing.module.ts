@@ -6,6 +6,7 @@ import {UsersComponent} from './users/users.component';
 import {SignInComponent} from './sign-in/sign-in.component';
 import {LoginActivateGuard} from '../@core/guards/login-activate.guard';
 import {SignOutComponent} from './sign-out/sign-out.component';
+import {CategoryCodesComponent} from "./category-codes/category-codes.component";
 
 const routes: Routes = [{
   path: '',
@@ -23,6 +24,10 @@ const routes: Routes = [{
     {
       path: 'sign-out',
       component: SignOutComponent,
+    },
+    {
+      path: 'category-codes',
+      component: CategoryCodesComponent,
     },
     { path: '', redirectTo: 'users', pathMatch: 'full' },
     { path: '**', redirectTo: 'users' },

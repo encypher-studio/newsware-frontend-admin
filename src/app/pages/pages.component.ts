@@ -14,7 +14,6 @@ import {AuthService} from '../@core/services/auth.service';
   `,
 })
 export class PagesComponent {
-
   menu = MENU_ITEMS;
 
   constructor(private authService: AuthService) {
@@ -26,7 +25,7 @@ export class PagesComponent {
 
   toggleSignInOut() {
     const isSignedIn = this.authService.isSignedIn();
-    this.menu[1].hidden = isSignedIn;
-    this.menu[2].hidden = !isSignedIn;
+    this.menu[2].hidden = isSignedIn;
+    this.menu[3].hidden = !isSignedIn;
   }
 }

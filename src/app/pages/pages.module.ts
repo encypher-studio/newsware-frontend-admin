@@ -6,6 +6,7 @@ import {PagesComponent} from './pages.component';
 import {PagesRoutingModule} from './pages-routing.module';
 import {UsersModule} from './users/users.module';
 import {SignInModule} from './sign-in/sign-in.module';
+import {CategoryCodesModule} from "./category-codes/category-codes.module";
 
 @NgModule({
   imports: [
@@ -14,6 +15,7 @@ import {SignInModule} from './sign-in/sign-in.module';
     NbMenuModule,
     UsersModule,
     SignInModule,
+    CategoryCodesModule
   ],
   declarations: [
     PagesComponent,
