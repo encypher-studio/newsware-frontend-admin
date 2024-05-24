@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:prod": "npm run build -- --configuration production --aot",
+    "build:production": "npm run build -- --configuration production --aot",
+    "build:staging": "npm run build -- --configuration staging --aot",
     "postinstall": "ngcc --properties es2015 es5 browser module main --first-only --create-ivy-entry-points --tsconfig \"./src/tsconfig.app.json\""
   },
   "dependencies": {
