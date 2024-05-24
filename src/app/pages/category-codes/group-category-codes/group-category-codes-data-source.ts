@@ -13,8 +13,7 @@ export class CategoryCodesDataSource extends ServerDataSource {
     protected apiService: ApiService,
     protected authService: AuthService,
     private toastrService: NbToastrService,
-    private source: string,
-    private customActionHook: (any) => void = () => { }
+    private source: string
   ) {
     super(http, { endPoint: apiService.backendUrl, dataKey: 'data' });
   }
@@ -68,31 +67,12 @@ export class CategoryCodesDataSource extends ServerDataSource {
   }
 
   replaceData(data) {
-    for (let i = 0; i < this.categoryCodes.length; i++) {
-      if (this.categoryCodes[i].source === data.source && this.categoryCodes[i].code === data.code) {
-        this.categoryCodes[i] = data
-        break
+    for (let i = 0; i < this.data.length; i++) {
+      if (this.data[i].id === data.id) {
+        this.data[i].id = data;
+        break;
       }
     }
     this.load(this.data);
-    this.refresh()
-  }
-
-  async onCreateConfirm(event) {
-    if (window.confirm('Are you sure you want to create?')) {
-      await this.apiService.createCategoryGroup({
-        code: event.newData['code'],
-        description: event.newData['description'],
-      });
-      event.confirm.resolve(event.newData);
-      this.toastrService.success("Created");
-      this.replaceData(event.newData);
-    } else {
-      event.confirm.reject();
-    }
-  }
-
-  async onCustomAction(event) {
-    this.customActionHook(event)
   }
 }

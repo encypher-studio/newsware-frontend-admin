@@ -1,10 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, NgZone, OnChanges, SimpleChanges } from '@angular/core';
 import { CategoryCodesDataSource } from './source-category-codes-data-source';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../../@core/services/api.service';
 import { AuthService } from "../../../@core/services/auth.service";
 import { NbToastrService } from "@nebular/theme";
 import { Settings } from "angular2-smart-table";
+import { SelectedGroupCode } from '../group-category-codes/group-category-codes.component';
 
 @Component({
   selector: 'ngx-source-category-codes',
@@ -13,16 +14,36 @@ import { Settings } from "angular2-smart-table";
 })
 export class SourceCategoryCodesComponent implements OnChanges {
   @Input() source: string
-  @Input() isSelectingCode: string
-  _isSelectingCode: string
+  @Input() selectedGroupCode: SelectedGroupCode
+  _selectedGroupCode: SelectedGroupCode = {
+    code: "",
+    children: [],
+    deleteCallback: async (code: string, source: string) => { },
+    addCallback: async (code: string, source: string) => { },
+  }
 
   settings: Settings = {
     actions: {
       custom: [
         {
           name: 'add-code',
-          title: '<span class="custom-action activate-icon">ADD CODE</span>',
-          hiddenWhen: (row) => row.isSelected || this._isSelectingCode === "no"
+          title: '<span class="custom-action activate-icon">ADD TO GROUP</span>',
+          hiddenWhen: (row) => {
+            return this._selectedGroupCode.code === ""
+              || this._selectedGroupCode.children.find(child =>
+                child.code === row.getData().code && child.source === row.getData().source
+              ) !== undefined
+          },
+        },
+        {
+          name: 'delete-code',
+          title: '<span class="custom-action activate-icon">REMOVE FROM GROUP</span>',
+          hiddenWhen: (row) => {
+            return this._selectedGroupCode.code === ""
+              || this._selectedGroupCode.children.find(child =>
+                child.code === row.getData().code && child.source === row.getData().source
+              ) === undefined
+          },
         },
       ],
     },
@@ -34,7 +55,7 @@ export class SourceCategoryCodesComponent implements OnChanges {
       saveButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
       confirmSave: true,
-      hiddenWhen: (row) => this._isSelectingCode !== "no"
+      hiddenWhen: () => this._selectedGroupCode.code !== ""
     },
     delete: {
       hiddenWhen: () => true
@@ -72,6 +93,7 @@ export class SourceCategoryCodesComponent implements OnChanges {
     private apiService: ApiService,
     private authService: AuthService,
     private toastrService: NbToastrService,
+    private zone: NgZone,
   ) {
   }
 
@@ -79,27 +101,24 @@ export class SourceCategoryCodesComponent implements OnChanges {
     if (changes.source?.currentValue)
       this.dataSource = new CategoryCodesDataSource(this.http, this.apiService, this.authService, this.toastrService, changes.source.currentValue, this.onCustomAction);
 
-    if (changes.isSelectingCode?.currentValue) {
-      this.dataSource.getElements().then(data => {
-        this.dataSource.load([...data])
-      })
-      this._isSelectingCode = changes.isSelectingCode.currentValue
+    if (changes.selectedGroupCode?.currentValue) {
+      console.log("CHANGED", changes.selectedGroupCode?.currentValue)
+      this._selectedGroupCode = changes.selectedGroupCode?.currentValue
+      this.dataSource.reset()
     }
   }
 
   onCustomAction = async (event) => {
     switch (event.action) {
       case 'add-code':
-        await this.apiService.addCodeToCategoryGroup({
-          parentCode: this.isSelectingCode,
-          child: {
-            code: event.data.code,
-            source: event.data.source,
-          }
-        })
-        this.toastrService.success('Code ' + event.data.code + ' added to group ' + this.isSelectingCode);
+        await this._selectedGroupCode.addCallback(event.data.code, event.data.source)
+        this.toastrService.success("", event.data.code + ' added to group ' + this.selectedGroupCode.code);
+        this.dataSource.replaceData(event.data);
+        break;
+      case 'delete-code':
+        await this.selectedGroupCode.deleteCallback(event.data.code, event.data.source)
+        this.toastrService.danger("", event.data.code + ' removed from group ' + this.selectedGroupCode.code, { icon: "" });
         break;
     }
-    this.dataSource.replaceData(event.data);
   }
 }

@@ -5,6 +5,7 @@ import { AuthService } from "../../@core/services/auth.service";
 import { NbToastrService } from "@nebular/theme";
 import { Settings } from "angular2-smart-table";
 import { Source } from '../../@core/models/source';
+import { SelectedGroupCode } from './group-category-codes/group-category-codes.component';
 
 @Component({
   selector: 'ngx-category-codes',
@@ -12,7 +13,7 @@ import { Source } from '../../@core/models/source';
   styleUrls: ['./category-codes.component.scss'],
 })
 export class CategoryCodesComponent {
-  isSelectingCode: string
+  selectedGroupCode: SelectedGroupCode
   selectedSource = ""
   settings: Settings = {
     add: {
@@ -68,7 +69,7 @@ export class CategoryCodesComponent {
     return source.code !== this.selectedSource
   }
 
-  handleIsSelectingCodeEvent(isSelectingCode: string) {
-    this.isSelectingCode = isSelectingCode
+  handleSelectedGroupCodeEvent(selectedGroupCode: SelectedGroupCode) {
+    this.selectedGroupCode = selectedGroupCode
   }
 }

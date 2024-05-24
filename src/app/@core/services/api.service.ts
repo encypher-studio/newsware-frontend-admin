@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angula
 import { environment } from '../../../environments/environment';
 import { GetUserRequest, SaveUserRequest, User } from '../models/user';
 import { Injectable } from '@angular/core';
-import { CategoryCode, PostCategoryCodeGroupAdd, PostCategoryCodegroupRequest as PostCategoryCodeGroupRequest, PutCategoryCodeRequest } from "../models/category-code";
+import { CategoryCode, PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PostCategoryCodegroupRequest as PostCategoryCodeGroupRequest, PutCategoryCodeRequest } from "../models/category-code";
 import { Source } from '../models/source';
 
 @Injectable({
@@ -44,6 +44,10 @@ export class ApiService {
 
   async addCodeToCategoryGroup(req: PostCategoryCodeGroupAdd) {
     await this.post('/admin/category-codes/group/add', req);
+  }
+
+  async deleteCodeFromCategoryGroup(req: PostCategoryCodeGroupDelete) {
+    await this.post('/admin/category-codes/group/delete', req);
   }
 
   async deleteUser(userId: number) {
@@ -88,6 +92,9 @@ export class ApiService {
         params: httpParams,
         headers: {
           'x-api-key': this.apikey,
+          'Cache-Control': 'no-cache, no-store, must-revalidate, post-check=0, pre- check=0',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         },
         observe: 'response',
       }).toPromise().catch(this.handleError),

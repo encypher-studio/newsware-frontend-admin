@@ -4,31 +4,21 @@
       Groups
     </nb-card-header>
     <nb-card-body>
-      <ngx-group-category-codes (isSelectingCode)="handleIsSelectingCodeEvent($event)"></ngx-group-category-codes>
+      <ngx-group-category-codes (selectedGroupCode)="handleSelectedGroupCodeEvent($event)"></ngx-group-category-codes>
     </nb-card-body>
   </div>
 </nb-card>
 
-
-<nb-card>
-  <div>
-    <nb-card-header>
-      {{ selectedSource }}
-    </nb-card-header>
-    <nb-card-body>
-      <ngx-source-category-codes [source]=(selectedSource)
-        [isSelectingCode]="isSelectingCode"></ngx-source-category-codes>
-    </nb-card-body>
-  </div>
-</nb-card>
-
-<nb-card>
-  <ng-container *ngFor="let source of sources">
-    <nb-card-header *ngIf="source.code !== selectedSource" style="cursor: pointer;"
-      (click)="selectedSource = source.code">
+<nb-accordion>
+  <nb-accordion-item *ngFor="let source of sources">
+    <nb-accordion-item-header>
       <div>
-        {{source.code}}
+        {{ source.code }}
       </div>
-    </nb-card-header>
-  </ng-container>
-</nb-card>
+    </nb-accordion-item-header>
+    <nb-accordion-item-body>
+      <ngx-source-category-codes [source]=(source.code)
+        [selectedGroupCode]="selectedGroupCode"></ngx-source-category-codes>
+    </nb-accordion-item-body>
+  </nb-accordion-item>
+</nb-accordion>
