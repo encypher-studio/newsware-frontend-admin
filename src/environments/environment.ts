@@ -11,5 +11,5 @@
 export const environment = {
   production: false,
   // backendUrl: 'http://localhost:8080',
-  backendUrl: 'https://newswareapi.encypherstudio.com'
+  backendUrl: 'https://nwapi-staging.encypherstudio.com'
 };

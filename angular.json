@@ -129,6 +129,9 @@
           "configurations": {
             "production": {
               "browserTarget": "ngx-admin-demo:build:production"
+            },
+            "staging": {
+              "browserTarget": "ngx-admin-demo:build:staging"
             }
           }
         },

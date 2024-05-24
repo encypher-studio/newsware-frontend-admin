@@ -1,8 +1,9 @@
-import {HttpClient, HttpErrorResponse, HttpParams, HttpResponse} from '@angular/common/http';
-import {environment} from '../../../environments/environment';
-import {GetUserRequest, SaveUserRequest, User} from '../models/user';
-import {Injectable} from '@angular/core';
-import {CategoryCode, PutCategoryCodeRequest} from "../models/category-code";
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { GetUserRequest, SaveUserRequest, User } from '../models/user';
+import { Injectable } from '@angular/core';
+import { CategoryCode, PostCategoryCodeGroupAdd, PostCategoryCodegroupRequest as PostCategoryCodeGroupRequest, PutCategoryCodeRequest } from "../models/category-code";
+import { Source } from '../models/source';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +18,10 @@ export class ApiService {
     this.restEndpoint = environment.backendUrl + "/api/v3"
   }
 
-  async getCategoryCodes(): Promise<ApiResult<CategoryCode[]>> {
-    return await this.get<CategoryCode[]>('/category-codes');
+  async getCategoryCodes(source: string): Promise<ApiResult<CategoryCode[]>> {
+    return await this.get<CategoryCode[]>('/category-codes', {
+      source
+    });
   }
 
   async putCategoryCode(req: PutCategoryCodeRequest) {
@@ -35,6 +38,14 @@ export class ApiService {
     await this.put('/admin/user', req);
   }
 
+  async createCategoryGroup(req: PostCategoryCodeGroupRequest) {
+    await this.post('/admin/category-codes/group', req);
+  }
+
+  async addCodeToCategoryGroup(req: PostCategoryCodeGroupAdd) {
+    await this.post('/admin/category-codes/group/add', req);
+  }
+
   async deleteUser(userId: number) {
     await this.delete('/admin/user', {
       userId,
@@ -47,19 +58,27 @@ export class ApiService {
     });
   }
 
+  async getSources(): Promise<ApiResult<Source[]>> {
+    return await this.get<Source[]>('/sources');
+  }
+
   async putApikey(userId: number): Promise<string> {
-    return await this.put<string>('/admin/apikey', {userId});
+    return await this.put<string>('/admin/apikey', { userId });
   }
 
   async getUserByApiKey(apikey: number): Promise<User> {
-    return (await this.get<User>('/user/apikey', {apikey}, false)).data;
+    return (await this.get<User>('/user/apikey', { apikey })).data;
   }
 
-  async get<T>(relativeUrl: string, params?: object, stringifyParams: boolean = true): Promise<ApiResult<T>> {
+  async get<T>(relativeUrl: string, params?: object): Promise<ApiResult<T>> {
     let httpParams = new HttpParams();
     if (params) {
       for (const key of Object.keys(params)) {
-        httpParams = httpParams.set(key, stringifyParams ? JSON.stringify(params[key]) : params[key]);
+        var value = params[key];
+        if (typeof params[key] === 'object') {
+          value = JSON.stringify(params[key])
+        }
+        httpParams = httpParams.set(key, value);
       }
     }
 
@@ -78,6 +97,17 @@ export class ApiService {
   async put<T>(relativeUrl: string, body?: object): Promise<T> {
     return this.handleSuccess<T>(
       await this.http.put(`${this.restEndpoint}${relativeUrl}`, body, {
+        headers: {
+          'x-api-key': this.apikey,
+        },
+        observe: 'response',
+      }).toPromise().catch(this.handleError),
+    ).data;
+  }
+
+  async post<T>(relativeUrl: string, body?: object): Promise<T> {
+    return this.handleSuccess<T>(
+      await this.http.post(`${this.restEndpoint}${relativeUrl}`, body, {
         headers: {
           'x-api-key': this.apikey,
         },

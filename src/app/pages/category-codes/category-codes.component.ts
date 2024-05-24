@@ -1,17 +1,19 @@
-import {Component} from '@angular/core';
-import {CategoryCodesDataSource} from './category-codes-data-source';
-import {HttpClient} from '@angular/common/http';
-import {ApiService} from '../../@core/services/api.service';
-import {AuthService} from "../../@core/services/auth.service";
-import {NbToastrService} from "@nebular/theme";
-import {Settings} from "angular2-smart-table";
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../../@core/services/api.service';
+import { AuthService } from "../../@core/services/auth.service";
+import { NbToastrService } from "@nebular/theme";
+import { Settings } from "angular2-smart-table";
+import { Source } from '../../@core/models/source';
 
 @Component({
-  selector: 'ngx-users',
+  selector: 'ngx-category-codes',
   templateUrl: './category-codes.component.html',
   styleUrls: ['./category-codes.component.scss'],
 })
 export class CategoryCodesComponent {
+  isSelectingCode: string
+  selectedSource = ""
   settings: Settings = {
     add: {
       hiddenWhen: () => true
@@ -29,7 +31,13 @@ export class CategoryCodesComponent {
       code: {
         title: 'Code',
         isEditable: false,
-        isSortable: false,
+        isSortable: true,
+        isAddable: false,
+      },
+      source: {
+        title: 'Source',
+        isEditable: false,
+        isSortable: true,
         isAddable: false,
       },
       description: {
@@ -45,14 +53,22 @@ export class CategoryCodesComponent {
     },
   };
 
-  source: CategoryCodesDataSource;
+  sources: Source[]
 
   constructor(
-    private http: HttpClient,
     private apiService: ApiService,
-    private authService: AuthService,
-    private toastrService: NbToastrService,
   ) {
-    this.source = new CategoryCodesDataSource(http, apiService, authService, toastrService);
+    this.apiService.getSources().then(res => {
+      this.sources = res.data
+      if (this.sources.length > 0) this.selectedSource = this.sources[0].code
+    })
+  }
+
+  isSelected(source: Source) {
+    return source.code !== this.selectedSource
+  }
+
+  handleIsSelectingCodeEvent(isSelectingCode: string) {
+    this.isSelectingCode = isSelectingCode
   }
 }

@@ -1,9 +1,9 @@
-import {HttpClient} from '@angular/common/http';
-import {ApiService} from '../../@core/services/api.service';
-import {AuthService} from '../../@core/services/auth.service';
-import {NbToastrService} from '@nebular/theme';
-import {ServerDataSource} from "angular2-smart-table";
-import {CategoryCode} from "../../@core/models/category-code";
+import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../../../@core/services/api.service';
+import { AuthService } from '../../../@core/services/auth.service';
+import { NbToastrService } from '@nebular/theme';
+import { ServerDataSource } from "angular2-smart-table";
+import { CategoryCode } from "../../../@core/models/category-code";
 
 export class CategoryCodesDataSource extends ServerDataSource {
   categoryCodes: CategoryCode[]
@@ -13,8 +13,10 @@ export class CategoryCodesDataSource extends ServerDataSource {
     protected apiService: ApiService,
     protected authService: AuthService,
     private toastrService: NbToastrService,
+    private source: string,
+    private customActionHook: (any) => void = () => { }
   ) {
-    super(http, {endPoint: apiService.backendUrl, dataKey: 'data'});
+    super(http, { endPoint: apiService.backendUrl, dataKey: 'data' });
   }
 
   getElements(): Promise<any> {
@@ -23,13 +25,14 @@ export class CategoryCodesDataSource extends ServerDataSource {
 
   async requestCategoryCodes(): Promise<any> {
     if (!this.categoryCodes) {
-      const res = await this.apiService.getCategoryCodes();
+      const res = await this.apiService.getCategoryCodes(this.source);
       this.categoryCodes = res.data
       this.lastRequestCount = res.totalCount;
     }
 
     const codeFilter = this.filterConf.filters.find(fc => fc.field == "code")
     const descriptionFilter = this.filterConf.filters.find(fc => fc.field == "description")
+    const sourceFilter = this.filterConf.filters.find(fc => fc.field == "source")
 
 
     return this.categoryCodes.filter((c) => {
@@ -38,7 +41,10 @@ export class CategoryCodesDataSource extends ServerDataSource {
         shouldRet = c.code.toLowerCase().includes(codeFilter.search.toLowerCase())
       }
       if (descriptionFilter?.search) {
-        shouldRet = c.description.toLowerCase().includes(codeFilter.search.toLowerCase())
+        shouldRet = c.description.toLowerCase().includes(descriptionFilter.search.toLowerCase())
+      }
+      if (sourceFilter?.search) {
+        shouldRet = c.source.toLowerCase().includes(sourceFilter.search.toLowerCase())
       }
       return shouldRet
     });
@@ -69,5 +75,23 @@ export class CategoryCodesDataSource extends ServerDataSource {
       }
     }
     this.load(this.data);
+  }
+
+  async onCreateConfirm(event) {
+    if (window.confirm('Are you sure you want to create?')) {
+      await this.apiService.createCategoryGroup({
+        code: event.newData['code'],
+        description: event.newData['description'],
+      });
+      event.confirm.resolve(event.newData);
+      this.toastrService.success("Created");
+      this.replaceData(event.newData);
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  async onCustomAction(event) {
+    this.customActionHook(event)
   }
 }
