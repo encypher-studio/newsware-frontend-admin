@@ -1,4 +1,5 @@
 import { CategoryCodes } from "@/components/category-codes/page"
+import { Sources } from "@/components/sources/page"
 import { Users } from "@/components/users/page"
 
 export interface RouteOption {
@@ -19,5 +20,9 @@ export const APP_ROUTES = {
     "category-codes": {
         title: "Category Codes",
         component: <CategoryCodes />
+    },
+    "sources": {
+        title: "Sources",
+        component: <Sources />
     },
 }

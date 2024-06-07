@@ -1,4 +1,4 @@
-import { Api, RestResponse } from "newsware";
+import { Api, RestResponse, SourceDetails } from "newsware";
 import { Environment } from '../environment/environment';
 import { CategoryCode, PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PostCategoryCodegroupRequest as PostCategoryCodeGroupRequest, PutCategoryCodeRequest } from "../models/category-code";
 import { GetUserRequest, PutApiKeyRequest, SaveUserRequest, User } from '../models/user';
@@ -61,5 +61,9 @@ export class ApiService {
 
   async getUserByApiKey(apikey: string): Promise<User> {
     return (await this.api.get<User>('/user/apikey', { apikey })).data;
+  }
+
+  async putSource(req: SourceDetails) {
+    return await this.api.put('/admin/sources', req);
   }
 }
