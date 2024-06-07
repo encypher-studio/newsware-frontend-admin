@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useContext } from 'react'
 import './App.css'
+import { AuthContext, AuthProvider } from './lib/context/auth'
+import { ThemeProvider } from './lib/context/theme-provider'
+import Auth from './components/auth/page'
+import Layout from './components/layout/page'
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { APP_ROUTES, RouteOption } from './lib/routes/routes'
+import path from "path"
+import { ServiceProvider } from './lib/context/service'
+import { Toaster } from './components/ui/toaster'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <AuthProvider>
+        <ServiceProvider>
+          <_app />
+          <Toaster />
+        </ServiceProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
+}
+
+function _app() {
+  const { isLoggedIn } = useContext(AuthContext)
+
+  if (isLoggedIn()) {
+    return (
+      <Router>
+        <Layout>
+          <Routes>
+            {
+              getRoutes(APP_ROUTES, "").map((route) => route)
+            }
+          </Routes>
+        </Layout >
+      </Router>
+    )
+  } else {
+    return <Auth />
+  }
+}
+
+const getRoutes = (routes: { [path: string]: RouteOption }, prefixPath: string): React.ReactNode[] => {
+  const nodes = []
+  for (const routePath in routes) {
+    const route = routes[routePath]
+    if (route.component) {
+      nodes.push(<Route key={path.join(prefixPath, routePath)} path={path.join(prefixPath, routePath)} element={route.component} />)
+    }
+
+    if (route.options) {
+      nodes.push(...getRoutes(route.options, path.join(prefixPath, routePath)))
+    }
+  }
+
+  return nodes
 }
 
 export default App
