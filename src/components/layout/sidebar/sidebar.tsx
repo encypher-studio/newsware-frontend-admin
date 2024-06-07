@@ -1,7 +1,6 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { AuthContext } from "@/lib/context/auth"
 import { APP_ROUTES, RouteOption } from "@/lib/routes/routes"
-import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu"
 import { CaretSortIcon, DoubleArrowLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
 import path from "path"
 import { useContext, useState } from "react"

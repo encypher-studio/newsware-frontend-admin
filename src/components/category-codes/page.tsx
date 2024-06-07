@@ -1,10 +1,10 @@
+import { LoadingSpinner } from "@/lib/spinner/spinner";
 import { useContext } from "react";
 import Section from "../section/section";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { CategoryCodesContext, CategoryCodesProvider } from "./category-codes-context";
 import { CategoryCodesTable } from "./category-codes-table";
 import { SaveCategoryCodeDialog } from "./save-category-code-dialog";
-import { LoadingSpinner } from "@/lib/spinner/spinner";
 
 export function CategoryCodes() {
     return (
