@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { CategoryCodesContext, CategoryCodesProvider } from "./category-codes-context";
 import { CategoryCodesTable } from "./category-codes-table";
 import { SaveCategoryCodeDialog } from "./save-category-code-dialog";
+import { LoadingSpinner } from "@/lib/spinner/spinner";
 
 export function CategoryCodes() {
     return (
@@ -15,8 +16,6 @@ export function CategoryCodes() {
 
 const _categoryCodes = () => {
     const { sourceCodes } = useContext(CategoryCodesContext)
-
-
 
     if (sourceCodes.length > 0) {
         return <Section title="Category Codes">
@@ -32,7 +31,6 @@ const _categoryCodes = () => {
             <Accordion className="mt-6" type="single" collapsible>
                 {sourceCodes.map((categoryCodes, i) => {
                     if (i === 0) return null
-                    console.log(categoryCodes)
                     return (
                         <AccordionItem key={categoryCodes[0].source} value={categoryCodes[0].source}>
                             <AccordionTrigger>{categoryCodes[0].source}</AccordionTrigger>
@@ -46,5 +44,7 @@ const _categoryCodes = () => {
         </Section>
     }
 
-    return <></>
+    return <div className="flex items-center justify-center h-[50vh]">
+        <LoadingSpinner size={200} />
+    </div>
 }
