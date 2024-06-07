@@ -72,6 +72,7 @@ export function Users() {
         },
         {
             id: "actions",
+            header: "Actions",
             enableHiding: false,
             cell: ({ row }) => {
                 const user = row.original

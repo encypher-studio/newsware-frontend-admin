@@ -4,7 +4,7 @@ import { AuthContext, AuthProvider } from './lib/context/auth'
 import { ThemeProvider } from './lib/context/theme-provider'
 import Auth from './components/auth/page'
 import Layout from './components/layout/page'
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { APP_ROUTES, RouteOption } from './lib/routes/routes'
 import path from "path"
 import { ServiceProvider } from './lib/context/service'
@@ -31,6 +31,7 @@ function _app() {
       <Router>
         <Layout>
           <Routes>
+            <Route path="*" element={<Navigate to="/users" replace />} />
             {
               getRoutes(APP_ROUTES, "").map((route) => route)
             }
