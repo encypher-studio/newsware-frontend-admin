@@ -1,7 +1,7 @@
 import { Api, RestResponse, SourceDetails } from "newsware";
 import { Environment } from '../environment/environment';
 import { CategoryCode, PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PostCategoryCodegroupRequest as PostCategoryCodeGroupRequest, PutCategoryCodeRequest } from "../models/category-code";
-import { GetUserRequest, PutApiKeyRequest, SaveUserRequest, User } from '../models/user';
+import { GetUserRequest, PutApiKeyRequest, Role, SaveUserRequest, User } from '../models/user';
 
 
 export class ApiService {
@@ -65,5 +65,9 @@ export class ApiService {
 
   async putSource(req: SourceDetails) {
     return await this.api.put('/admin/sources', req);
+  }
+
+  async getRoles(): Promise<Role[]> {
+    return (await this.api.get<Role[]>('/admin/roles')).data;
   }
 }

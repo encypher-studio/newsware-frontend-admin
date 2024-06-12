@@ -1,10 +1,11 @@
 import { CategoryCode, SourceDetails } from "newsware";
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { ServiceContext } from "@/lib/context/service";
+import { Role } from "../models/user";
 
-interface ICategoryCodesContext {
+interface IDataContext {
     selectedGroupCode?: CategoryCode
     setSelectedGroupCode: (categoryCode?: CategoryCode) => void
     editChildCode: (categoryCode: CategoryCode, remove: boolean) => void
@@ -12,26 +13,37 @@ interface ICategoryCodesContext {
     onCategoryCodeChanged: (categoryCode: CategoryCode, isDelete?: boolean) => void
     setSelectedCategoryCode: (categoryCode?: CategoryCode) => void
     selectedCategoryCode: CategoryCode | undefined
+    sources: SourceDetails[]
+    roles: Role[]
 }
 
-export const CategoryCodesContext = createContext<ICategoryCodesContext>({
+export const DataContext = createContext<IDataContext>({
     setSelectedGroupCode: () => { },
     editChildCode: () => { },
     sourceCodes: [],
     onCategoryCodeChanged: () => { },
     setSelectedCategoryCode: () => { },
-    selectedCategoryCode: undefined
+    selectedCategoryCode: undefined,
+    sources: [],
+    roles: []
 })
 
-export const CategoryCodesProvider = ({ children }: PropsWithChildren) => {
+export const DataProvider = ({ children }: PropsWithChildren) => {
     const [selectedGroupCode, _setSelectedGroupCode] = useState<CategoryCode | undefined>(undefined)
     const [selectedCategoryCode, setSelectedCategoryCode] = useState<CategoryCode | undefined>(undefined)
     const { toast } = useToast()
     const { apiService } = useContext(ServiceContext)
+    const [sources, setSources] = useState<SourceDetails[]>([])
     const [sourceCodes, setSourceCodes] = useState<CategoryCode[][]>([])
+    const [roles, setRoles] = useState<Role[]>([])
 
     useEffect(() => {
-        apiService.api.getSources().then(async (sources: SourceDetails[]) => {
+        apiService.api.getSources().then(setSources)
+        apiService.getRoles().then(setRoles)
+    }, [])
+
+    useEffect(() => {
+        (async () => {
             const sourceCodes = []
             for (const source of sources) {
                 sourceCodes.push(await apiService.api.getCategoryCodes(source.code))
@@ -40,12 +52,8 @@ export const CategoryCodesProvider = ({ children }: PropsWithChildren) => {
             const groupCodes = await apiService.api.getCategoryCodes("group")
 
             setSourceCodes([groupCodes, ...sourceCodes.filter(categoryCodes => categoryCodes.length > 0)])
-        })
-    }, [])
-
-    useEffect(() => {
-        console.log("ASD<MPSAD", sourceCodes)
-    }, [sourceCodes])
+        })()
+    }, [sources])
 
     const setSelectedGroupCode = (categoryCode?: CategoryCode) => {
         _setSelectedGroupCode(categoryCode)
@@ -123,16 +131,18 @@ export const CategoryCodesProvider = ({ children }: PropsWithChildren) => {
     }
 
     return (
-        <CategoryCodesContext.Provider value={{
+        <DataContext.Provider value={{
             selectedGroupCode,
             setSelectedGroupCode,
             editChildCode,
             onCategoryCodeChanged,
             sourceCodes,
             selectedCategoryCode,
-            setSelectedCategoryCode
+            setSelectedCategoryCode,
+            sources,
+            roles
         }}>
             {children}
-        </CategoryCodesContext.Provider>
+        </DataContext.Provider>
     )
 }

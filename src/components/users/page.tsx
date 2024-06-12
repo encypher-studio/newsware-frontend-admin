@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
-import { SaveUserDialog } from "./create-user-dialog";
+import { SaveUserDialog } from "./save-user-dialog";
 
 export function Users() {
     const [users, setUsers] = useState<User[]>([])
@@ -67,7 +67,7 @@ export function Users() {
             header: "Api Key",
             cell: ({ row }) => {
                 const user = row.original
-                return user.apikey ? user.apikey : <div className="text-destructive">NOT ACTIVE</div>
+                return user.apiKey ? user.apiKey : <div className="text-destructive">NOT ACTIVE</div>
             }
         },
         {
@@ -88,9 +88,9 @@ export function Users() {
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             {
-                                user.apikey &&
+                                user.apiKey &&
                                 <DropdownMenuItem
-                                    onClick={() => navigator.clipboard.writeText(user.apikey)}
+                                    onClick={() => navigator.clipboard.writeText(user.apiKey)}
                                 >
                                     Copy api key
                                 </DropdownMenuItem>

@@ -1,3 +1,4 @@
+import { SourceDetails } from 'newsware';
 import { Pagination, Sort } from './base';
 
 export interface GetUserRequest extends GetUserFilter {
@@ -15,25 +16,27 @@ export interface SaveUserRequest {
   id?: number;
   name: string;
   email: string;
+  sources: string[];
+  apiKey: string;
+  roles: string[];
 }
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  apikey: string;
-  roles: Role[];
+  apiKey: string;
+  roles?: Role[];
+  sources: SourceDetails[];
 }
 
 export interface Role {
-  id: number;
-  name: string;
+  id: string;
 }
 
 export enum RoleId {
-  RoleAdmin = 1,
-  RoleClient,
-  roleLimit,
+  RoleAdmin = "admin",
+  RoleClient = "client",
 }
 
 export interface PutApiKeyRequest {

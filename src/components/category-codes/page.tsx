@@ -1,21 +1,13 @@
 import { LoadingSpinner } from "@/lib/spinner/spinner";
 import { useContext } from "react";
+import { DataContext } from "../../lib/context/data";
 import Section from "../section/section";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { CategoryCodesContext, CategoryCodesProvider } from "./category-codes-context";
 import { CategoryCodesTable } from "./category-codes-table";
 import { SaveCategoryCodeDialog } from "./save-category-code-dialog";
 
 export function CategoryCodes() {
-    return (
-        <CategoryCodesProvider>
-            <_categoryCodes />
-        </CategoryCodesProvider>
-    )
-}
-
-const _categoryCodes = () => {
-    const { sourceCodes } = useContext(CategoryCodesContext)
+    const { sourceCodes } = useContext(DataContext)
 
     if (sourceCodes.length > 0) {
         return <Section title="Category Codes">
