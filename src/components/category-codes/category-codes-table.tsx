@@ -5,7 +5,7 @@ import { CategoryCode } from "newsware";
 import { useContext } from "react";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { CategoryCodesContext } from "./category-codes-context";
+import { DataContext } from "../../lib/context/data";
 
 interface IProps {
     categoryCodes: CategoryCode[]
@@ -14,8 +14,8 @@ interface IProps {
 
 export function CategoryCodesTable({ categoryCodes, headerOptions }: IProps) {
     const isGroup = (categoryCode: CategoryCode) => categoryCode.source === "group"
-    const { setSelectedGroupCode: setGroupCategoryCode, selectedGroupCode: groupCategoryCode, editChildCode } = useContext(CategoryCodesContext)
-    const { setSelectedCategoryCode } = useContext(CategoryCodesContext)
+    const { setSelectedGroupCode: setGroupCategoryCode, selectedGroupCode: groupCategoryCode, editChildCode } = useContext(DataContext)
+    const { setSelectedCategoryCode } = useContext(DataContext)
 
 
     let categoryCodesColumns: ColumnDef<CategoryCode>[] = [

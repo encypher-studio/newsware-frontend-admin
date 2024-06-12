@@ -13,7 +13,7 @@ export const ServiceContext = React.createContext<IServiceContext>({
 export function ServiceProvider({ children }: PropsWithChildren) {
     const { user } = useContext(AuthContext)
 
-    const apiService = new ApiService(user ? user.apikey : "")
+    const apiService = new ApiService(user ? user.apiKey : "")
 
     return <ServiceContext.Provider value={{
         apiService

@@ -12,7 +12,9 @@ import { Label } from "@/components/ui/label"
 import { AuthContext } from "@/lib/context/auth"
 import { ServiceContext } from "@/lib/context/service"
 import { User } from "@/lib/models/user"
+import { SelectDropdown } from "@/lib/select-dropdown/select-dropdown"
 import { useContext, useEffect, useRef, useState } from "react"
+import { DataContext } from "../../lib/context/data"
 import { Switch } from "../ui/switch"
 import { ToastAction } from "../ui/toast"
 import { useToast } from "../ui/use-toast"
@@ -30,16 +32,32 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     const { user: loggedUser } = useContext(AuthContext)
     const { toast } = useToast()
     const { apiService } = useContext(ServiceContext)
+    const { sources, roles } = useContext(DataContext)
+    const [selectedSources, setSelectedSources] = useState<string[]>(user?.sources?.map(source => source.code) ?? [])
+    const [sourcesOptions, setSourcesOptions] = useState<{ label: string, value: string }[]>([])
+    const [rolesOptions, setRolesOptions] = useState<{ label: string, value: string }[]>([])
+    const [selectedRoles, setSelectedRoles] = useState<string[]>(user?.roles?.map(role => role.id) ?? [])
+
+    useEffect(() => {
+        setSourcesOptions(sources.map(source => ({ label: source.name ? source.name : source.code, value: source.code })))
+    }, [sources])
+
+    useEffect(() => {
+        setRolesOptions(roles.map(role => ({ label: role.id, value: role.id })))
+    }, [roles])
 
     const handleSubmit = () => {
         apiService.saveUser({
             id: _user?.id,
             name,
             email,
+            sources: selectedSources,
+            roles: selectedRoles,
+            apiKey: _user?.apiKey ?? ""
         }).then((modifiedUser) => {
             toast({ title: 'User saved' })
             const shouldActivate = !_user
-            _setUser(prev => ({ ...modifiedUser, apikey: prev ? prev.apikey : "" }))
+            _setUser(prev => ({ ...modifiedUser, apiKey: prev ? prev.apiKey : "" }))
             if (shouldActivate) {
                 onActiveChange(true, modifiedUser)
             }
@@ -88,7 +106,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
                 apiService.putApikey(scopedUser.id)
                     .then((apikey) => {
                         toast({ title: 'User activated' })
-                        _setUser({ ...scopedUser, apikey })
+                        _setUser({ ...scopedUser, apiKey: apikey })
                     })
                     .catch((e) => {
                         toast({ title: `Failed to activate user: ${e.message}`, variant: 'destructive' })
@@ -97,7 +115,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
                 apiService.deleteApikey(scopedUser.id)
                     .then(() => {
                         toast({ title: 'User deactivated' })
-                        _setUser({ ...scopedUser, apikey: "" })
+                        _setUser({ ...scopedUser, apiKey: "" })
                     })
                     .catch((e) => {
                         toast({ title: `Failed to deactivate user: ${e.message}`, variant: 'destructive' })
@@ -113,6 +131,10 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     useEffect(() => {
         setName(_user?.name ?? '')
         setEmail(_user?.email ?? '')
+        setSelectedRoles(_user?.roles?.map(role => role.id) ?? [])
+        setSelectedSources(_user === undefined
+            ? sources.map(source => source.code)
+            : _user.sources?.map(source => source.code) ?? [])
         if (_user) {
             onUserChanged(_user)
 
@@ -120,7 +142,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
                 refDialogTrigger.current.click()
             }
         }
-    }, [_user])
+    }, [_user, sources])
 
     return (
         <Dialog>
@@ -153,11 +175,17 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
                         </Label>
                         <Input id="email" value={email} className="col-span-3" onChange={e => setEmail(e.target.value)} />
                     </div>
+                    <div className="flex justify-center">
+                        <SelectDropdown title="Sources" options={sourcesOptions} values={selectedSources} onValuesChange={setSelectedSources} />
+                    </div>
+                    <div className="flex justify-center">
+                        <SelectDropdown disabled={_user?.id === loggedUser?.id} title="Roles" options={rolesOptions} values={selectedRoles} onValuesChange={setSelectedRoles} />
+                    </div>
                 </div>
                 <DialogFooter>
                     {_user &&
                         <div className="flex items-center space-x-2 flex-1">
-                            <Switch id="active" checked={!!_user?.apikey} onCheckedChange={onActiveChange} />
+                            <Switch id="active" checked={!!_user?.apiKey} onCheckedChange={onActiveChange} />
                             <Label htmlFor="active">Active</Label>
                         </div>
                     }

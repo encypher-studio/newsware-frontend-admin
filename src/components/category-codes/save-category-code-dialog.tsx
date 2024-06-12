@@ -12,10 +12,10 @@ import { Label } from "@/components/ui/label"
 import { ServiceContext } from "@/lib/context/service"
 import { useContext, useEffect, useRef, useState } from "react"
 import { useToast } from "../ui/use-toast"
-import { CategoryCodesContext } from "./category-codes-context"
+import { DataContext } from "../../lib/context/data"
 
 export function SaveCategoryCodeDialog() {
-    const { selectedCategoryCode, onCategoryCodeChanged } = useContext(CategoryCodesContext)
+    const { selectedCategoryCode, onCategoryCodeChanged } = useContext(DataContext)
     const [code, setCode] = useState(selectedCategoryCode?.code ?? '')
     const [description, setDescription] = useState(selectedCategoryCode?.description ?? '')
     const [_categoryCode, _setCategoryCode] = useState(selectedCategoryCode)

@@ -1,21 +1,19 @@
-import { ServiceContext } from "@/lib/context/service";
+import { DataContext } from "@/lib/context/data";
 import { DataTable } from "@/lib/data-table/data-table";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { SourceDetails } from "newsware";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import Section from "../section/section";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { useToast } from "../ui/use-toast";
 import { EditSourceDialog } from "./edit-source-dialog";
 
 export function Sources() {
-    const [sources, setSources] = useState<SourceDetails[]>([])
-    const { apiService } = useContext(ServiceContext)
     const [selectedSource, setSelectedSource] = useState<SourceDetails>({ code: "", name: "", description: "" })
-    const { toast } = useToast()
+    const { sources } = useContext(DataContext)
+    const [_sources, setSources] = useState<SourceDetails[]>(sources)
     const sourceColumns = useMemo<ColumnDef<SourceDetails>[]>(() => ([
         {
             accessorKey: "code",
@@ -56,10 +54,6 @@ export function Sources() {
             },
         },
     ]), [])
-
-    useEffect(() => {
-        apiService.api.getSources().then(setSources).catch((e: any) => toast({ title: e.message, variant: "destructive" }))
-    }, [])
 
     const onSourceChanged = (source: SourceDetails) => {
         setSources((prev) => {
