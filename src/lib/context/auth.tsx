@@ -48,9 +48,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     const isAdmin = (user: User) => {
+        if (!user.roles) return false
+
         for (const role of user.roles) {
             if (role.id === RoleId.RoleAdmin) return true;
         }
+
         return false;
     }
 
