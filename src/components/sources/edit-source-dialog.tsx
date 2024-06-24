@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ServiceContext } from "@/lib/context/service"
+import { useServiceContext } from "@/lib/context/service"
 import { SourceDetails } from "newsware"
-import { PropsWithChildren, useContext, useEffect, useState } from "react"
+import { PropsWithChildren, useEffect, useState } from "react"
 import { useToast } from "../ui/use-toast"
 
 interface IProps {
@@ -22,7 +22,7 @@ export function EditSourceDialog({ source, onSourceChanged, children }: PropsWit
     const [name, setName] = useState(source?.name ?? '')
     const [description, setDescription] = useState(source?.description ?? '')
     const { toast } = useToast()
-    const { apiService } = useContext(ServiceContext)
+    const { apiService } = useServiceContext()
     const [open, setOpen] = useState(false);
 
     const handleSubmit = () => {

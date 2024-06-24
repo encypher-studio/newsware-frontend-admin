@@ -1,8 +1,9 @@
-import { CategoryCode, SourceDetails } from "newsware";
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
-import { useToast } from "../../components/ui/use-toast";
+import { useServiceContext } from "@/lib/context/service";
 import { ToastAction } from "@radix-ui/react-toast";
-import { ServiceContext } from "@/lib/context/service";
+import { Api, CategoryCode, SourceDetails } from "newsware";
+import { PropsWithChildren, createContext, useEffect, useState } from "react";
+import { useToast } from "../../components/ui/use-toast";
+import { Environment } from "../environment/environment";
 import { Role } from "../models/user";
 
 interface IDataContext {
@@ -32,24 +33,24 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
     const [selectedGroupCode, _setSelectedGroupCode] = useState<CategoryCode | undefined>(undefined)
     const [selectedCategoryCode, setSelectedCategoryCode] = useState<CategoryCode | undefined>(undefined)
     const { toast } = useToast()
-    const { apiService } = useContext(ServiceContext)
+    const { apiService } = useServiceContext()
     const [sources, setSources] = useState<SourceDetails[]>([])
     const [sourceCodes, setSourceCodes] = useState<CategoryCode[][]>([])
     const [roles, setRoles] = useState<Role[]>([])
 
     useEffect(() => {
-        apiService.api.getSources().then(setSources)
         apiService.getRoles().then(setRoles)
+        Api.getSources(Environment.apiEndpointDescription).then(setSources)
     }, [])
 
     useEffect(() => {
         (async () => {
             const sourceCodes = []
             for (const source of sources) {
-                sourceCodes.push(await apiService.api.getCategoryCodes(source.code))
+                sourceCodes.push(await Api.getCategoryCodes(source.code, Environment.apiEndpointDescription))
             }
 
-            const groupCodes = await apiService.api.getCategoryCodes("group")
+            const groupCodes = await Api.getCategoryCodes("group", Environment.apiEndpointDescription)
 
             setSourceCodes([groupCodes, ...sourceCodes.filter(categoryCodes => categoryCodes.length > 0)])
         })()

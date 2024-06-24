@@ -1,15 +1,15 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { AuthContext } from "@/lib/context/auth"
+import { useAuthContext } from "@/lib/context/auth"
 import { APP_ROUTES, RouteOption } from "@/lib/routes/routes"
 import { CaretSortIcon, DoubleArrowLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
 import path from "path"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 
 export default function Sidebar() {
     const location = useLocation()
     const [open, setOpen] = useState(true)
-    const { logOut } = useContext(AuthContext)
+    const { signOut } = useAuthContext()
 
     const getOptions = (routes: { [path: string]: RouteOption }, prefixPath: string): React.ReactNode[] => {
         let indentation = prefixPath.split("/").length
@@ -78,7 +78,7 @@ export default function Sidebar() {
                                 <Link
                                     to={"#"}
                                     className="mt-10 text-muted-foreground group flex w-full items-center rounded-md border border-transparent py-1 hover:underline"
-                                    onClick={() => logOut()}>Logout</Link>
+                                    onClick={() => signOut()}>Logout</Link>
                             </div>
                         </div>
                     </div>

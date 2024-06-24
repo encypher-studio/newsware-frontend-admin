@@ -1,15 +1,14 @@
-import { useContext } from 'react'
-import './App.css'
-import { AuthContext, AuthProvider } from './lib/context/auth'
-import { ThemeProvider } from './lib/context/theme-provider'
-import Auth from './components/auth/page'
-import Layout from './components/layout/page'
-import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { APP_ROUTES, RouteOption } from './lib/routes/routes'
 import path from "path"
-import { ServiceProvider } from './lib/context/service'
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom"
+import './App.css'
+import { Auth } from "./components/auth/page"
+import Layout from './components/layout/page'
 import { Toaster } from './components/ui/toaster'
+import { AuthProvider, useAuthContext } from './lib/context/auth'
 import { DataProvider } from './lib/context/data'
+import { ServiceProvider } from './lib/context/service'
+import { ThemeProvider } from './lib/context/theme-provider'
+import { APP_ROUTES, RouteOption } from './lib/routes/routes'
 
 function App() {
   return (
@@ -25,9 +24,9 @@ function App() {
 }
 
 function _app() {
-  const { isLoggedIn } = useContext(AuthContext)
+  const { user } = useAuthContext()
 
-  if (isLoggedIn()) {
+  if (user) {
     return (
       <DataProvider>
         <Router>
@@ -43,7 +42,9 @@ function _app() {
       </DataProvider>
     )
   } else {
-    return <Auth />
+    return <div className="py-6 px-6">
+      <Auth />
+    </div>
   }
 }
 

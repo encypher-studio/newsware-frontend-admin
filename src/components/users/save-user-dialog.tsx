@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { AuthContext } from "@/lib/context/auth"
-import { ServiceContext } from "@/lib/context/service"
+import { useAuthContext } from "@/lib/context/auth"
+import { useServiceContext } from "@/lib/context/service"
 import { User } from "@/lib/models/user"
 import { SelectDropdown } from "@/lib/select-dropdown/select-dropdown"
 import { useContext, useEffect, useRef, useState } from "react"
@@ -29,9 +29,9 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     const [email, setEmail] = useState(user?.email ?? '')
     const [_user, _setUser] = useState(user)
     const refDialogTrigger = useRef<HTMLButtonElement>(null)
-    const { user: loggedUser } = useContext(AuthContext)
+    const { user: loggedUser } = useAuthContext()
     const { toast } = useToast()
-    const { apiService } = useContext(ServiceContext)
+    const { apiService } = useServiceContext()
     const { sources, roles } = useContext(DataContext)
     const [selectedSources, setSelectedSources] = useState<string[]>(user?.sources?.map(source => source.code) ?? [])
     const [sourcesOptions, setSourcesOptions] = useState<{ label: string, value: string }[]>([])

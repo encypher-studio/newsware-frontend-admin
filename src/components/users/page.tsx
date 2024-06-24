@@ -1,4 +1,4 @@
-import { ServiceContext } from "@/lib/context/service";
+import { useServiceContext } from "@/lib/context/service";
 import { DataTable } from "@/lib/data-table/data-table";
 import { DataTableColumnHeader } from "@/lib/data-table/data-table-column-header";
 import { SorDirection } from "@/lib/models/base";
@@ -6,7 +6,7 @@ import { GetUserFilter, User } from "@/lib/models/user";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
 import { RestResponse } from "newsware";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Section from "../section/section";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -16,7 +16,7 @@ import { SaveUserDialog } from "./save-user-dialog";
 
 export function Users() {
     const [users, setUsers] = useState<User[]>([])
-    const { apiService } = useContext(ServiceContext)
+    const { apiService } = useServiceContext()
     const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined)
     const [pagination, setPagination] = useState<PaginationState>({
         pageSize: 10,

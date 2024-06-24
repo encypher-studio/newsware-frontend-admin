@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ServiceContext } from "@/lib/context/service"
+import { useServiceContext } from "@/lib/context/service"
 import { useContext, useEffect, useRef, useState } from "react"
-import { useToast } from "../ui/use-toast"
 import { DataContext } from "../../lib/context/data"
+import { useToast } from "../ui/use-toast"
 
 export function SaveCategoryCodeDialog() {
     const { selectedCategoryCode, onCategoryCodeChanged } = useContext(DataContext)
@@ -21,7 +21,7 @@ export function SaveCategoryCodeDialog() {
     const [_categoryCode, _setCategoryCode] = useState(selectedCategoryCode)
     const refDialogTrigger = useRef<HTMLButtonElement>(null)
     const { toast } = useToast()
-    const { apiService } = useContext(ServiceContext)
+    const { apiService } = useServiceContext()
 
     useEffect(() => {
         _setCategoryCode(selectedCategoryCode)
