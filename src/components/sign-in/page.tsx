@@ -1,22 +1,28 @@
 import { useAuthContext } from "@/lib/context/auth"
 import { Icons } from "@/lib/icons/icons"
+import { AppPaths } from "@/lib/routes/paths"
 import { useState } from "react"
+import { Link, Navigate } from "react-router-dom"
 import Section from "../section/section"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
-export const Auth = () => {
+export const SignIn = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const { signIn: logIn } = useAuthContext()
+    const { signIn, user } = useAuthContext()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    if (user) {
+        return <Navigate to={AppPaths.HOME} />
+    }
 
     const handleLogIn = (e: React.SyntheticEvent) => {
         e.preventDefault();
 
         (async () => {
             setIsLoading(true)
-            await logIn({
+            await signIn({
                 type: "email",
                 email,
                 password
@@ -30,7 +36,7 @@ export const Auth = () => {
 
         (async () => {
             setIsLoading(true)
-            await logIn({
+            await signIn({
                 type: "google"
             })
             setIsLoading(false)
@@ -72,6 +78,13 @@ export const Auth = () => {
                             )}
                             Sign In with Email
                         </Button>
+                        <div className="flex justify-center">
+                            <Button variant="link">
+                                <Link to={AppPaths.RESET_PASSWORD}>
+                                    Forgot password?
+                                </Link>
+                            </Button>
+                        </div>
                     </div>
                 </form>
                 <div className="relative">

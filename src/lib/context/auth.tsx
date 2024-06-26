@@ -1,8 +1,8 @@
 import { useToast } from '@/components/ui/use-toast';
 import { FirebaseApp, initializeApp } from 'firebase/app';
-import { Auth, GoogleAuthProvider, ParsedToken, getAuth, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { Auth, GoogleAuthProvider, ParsedToken, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import React, { PropsWithChildren, useContext, useEffect, useMemo } from "react";
-import { RoleId, User } from "../models/user";
+import { User } from "../models/user";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD6ulCmv_WCGw1MIgLnAF8vn1_WWcz2RYg",
@@ -29,6 +29,7 @@ interface IAuthContext {
     signIn(params: ISignInParamsEmail | ISignInParamsPopup): Promise<void>
     signOut(): void
     setUser: React.Dispatch<React.SetStateAction<User | undefined>>
+    resetPassword(email: string): Promise<void>
 }
 
 export const AuthContext = React.createContext<IAuthContext | null>(null)
@@ -48,18 +49,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
                 firebaseUser.getIdTokenResult().then((idTokenResult) => {
                     setFirebaseToken(idTokenResult.token)
                     const userNew = getUserFromClaims(idTokenResult.claims)
-                    if (!userNew?.roles?.find(role => role.id === RoleId.RoleAdmin)) {
-                        toast({
-                            description: "You do not have the required permissions to access this application",
-                            variant: "destructive"
-                        })
-                        setUser(undefined)
-                        signOut()
-                        return
-                    }
-
                     setUser(userNew)
-
                 })
             } else {
                 setUser(undefined)
@@ -98,7 +88,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     const signOut = async () => {
-        console.log("LOG OUT")
         try {
             await firebaseAuth.signOut()
         } catch (error: any) {
@@ -109,20 +98,38 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
     }
 
+    const resetPassword = async (email: string) => {
+        try {
+            await sendPasswordResetEmail(firebaseAuth, email, {
+                url: "http://localhost:3000/sign-in",
+            })
+            toast({
+                description: "Reset password email sent",
+            })
+        } catch (error: any) {
+            toast({
+                description: error.message,
+                variant: "destructive"
+            })
+            throw error
+        }
+    }
+
 
     return <AuthContext.Provider value={{
         user,
         signIn,
         signOut,
         firebaseToken,
-        setUser
+        setUser,
+        resetPassword
     }}>
         {children}
     </AuthContext.Provider>
 }
 
 export const useAuthContext = () => {
-    const context = useContext(AuthContext)
+    const context = useContext(AuthContext);
 
     if (!context) {
         throw new Error(

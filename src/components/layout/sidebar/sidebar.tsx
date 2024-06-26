@@ -1,46 +1,55 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useAuthContext } from "@/lib/context/auth"
-import { APP_ROUTES, RouteOption } from "@/lib/routes/routes"
 import { CaretSortIcon, DoubleArrowLeftIcon, HamburgerMenuIcon } from "@radix-ui/react-icons"
 import path from "path"
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 
-export default function Sidebar() {
+export interface ISidebarOption {
+    title: string
+    path: string
+    children?: ISidebarOption[]
+    targetBlank?: boolean
+    forceExact?: boolean
+}
+
+interface IProps {
+    options: ISidebarOption[]
+}
+
+export default function Sidebar({ options }: IProps) {
     const location = useLocation()
     const [open, setOpen] = useState(true)
     const { signOut } = useAuthContext()
 
-    const getOptions = (routes: { [path: string]: RouteOption }, prefixPath: string): React.ReactNode[] => {
+    const buildOptions = (options: ISidebarOption[], prefixPath: string): React.ReactNode[] => {
         let indentation = prefixPath.split("/").length
         if (prefixPath === "") {
             indentation = 0
         }
 
         const nodes = []
-        for (const optionPath in routes) {
-            const option = routes[optionPath]
-
+        for (const option of options) {
             const content = []
-            if (option.options) {
-                content.push(...getOptions(option.options, path.join(prefixPath, optionPath)))
+            if (option.children) {
+                content.push(...buildOptions(option.children, path.join(prefixPath, option.path)))
             }
 
-            nodes.push(<Collapsible key={option.title} className="grid grid-flow-row auto-rows-max text-sm" defaultOpen={location.pathname.startsWith(path.join("/", prefixPath, optionPath))}>
+            nodes.push(<Collapsible key={option.title} className="grid grid-flow-row auto-rows-max text-sm" defaultOpen={location.pathname.startsWith(path.join("/", prefixPath, option.path))}>
                 <CollapsibleTrigger asChild>
                     <Link
-                        key={optionPath}
+                        key={option.path}
                         className={(" pl-" + indentation * 2)
                             + (prefixPath === "" ? " pt-2" : " text-muted-foreground")
-                            + (location.pathname.startsWith(path.join("/", prefixPath, optionPath)) ? "font-medium text-foreground" : "")
+                            + (location.pathname.startsWith(path.join("/", prefixPath, option.path)) ? "font-medium text-foreground" : "")
                             + " group flex w-full items-center rounded-md border border-transparent py-1 hover:underline"
                         }
                         to={
-                            option.forceExact ? optionPath :
-                                optionPath.startsWith("http") || option.component ? path.join(prefixPath, optionPath) : location.pathname
+                            option.forceExact ? option.path :
+                                option.path.startsWith("http") ? location.pathname : path.join(prefixPath, option.path)
                         }
                         target={option.targetBlank ? "_blank" : ""}>
-                        {option.title} {option.options ? <CaretSortIcon className="h-4 w-4" /> : <></>}
+                        {option.title} {option.children ? <CaretSortIcon className="h-4 w-4" /> : <></>}
                     </Link>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -73,12 +82,12 @@ export default function Sidebar() {
                         <div className="min-width: 100%; display: table;">
                             <div className="w-full">
                                 {
-                                    getOptions(APP_ROUTES, "").map((node) => node)
+                                    buildOptions(options, "").map((node) => node)
                                 }
                                 <Link
                                     to={"#"}
                                     className="mt-10 text-muted-foreground group flex w-full items-center rounded-md border border-transparent py-1 hover:underline"
-                                    onClick={() => signOut()}>Logout</Link>
+                                    onClick={() => signOut()}>Sign out</Link>
                             </div>
                         </div>
                     </div>
