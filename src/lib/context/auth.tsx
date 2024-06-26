@@ -100,9 +100,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const resetPassword = async (email: string) => {
         try {
-            await sendPasswordResetEmail(firebaseAuth, email, {
-                url: "http://localhost:3000/sign-in",
-            })
+            await sendPasswordResetEmail(firebaseAuth, email)
             toast({
                 description: "Reset password email sent",
             })

@@ -1,6 +1,5 @@
 import { CategoryCodes } from "@/components/category-codes/page"
 import Layout from "@/components/layout/page"
-import { ResetPassword } from "@/components/reset-password/page"
 import { SignIn } from "@/components/sign-in/page"
 import { Sources } from "@/components/sources/page"
 import { Users } from "@/components/users/page"
@@ -19,10 +18,6 @@ export const appRoutes: RouteObject[] = [
                     {
                         element: <SignIn />,
                         path: AppPaths.SIGN_IN,
-                    },
-                    {
-                        element: <ResetPassword />,
-                        path: AppPaths.RESET_PASSWORD,
                     }
                 ]
             },

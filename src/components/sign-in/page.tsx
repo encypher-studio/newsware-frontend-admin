@@ -1,8 +1,9 @@
 import { useAuthContext } from "@/lib/context/auth"
+import { Environment } from "@/lib/environment/environment"
 import { Icons } from "@/lib/icons/icons"
 import { AppPaths } from "@/lib/routes/paths"
 import { useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import Section from "../section/section"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -43,6 +44,10 @@ export const SignIn = () => {
         })()
     }
 
+    const getResetPasswordUrl = (): string => {
+        return `${Environment.usersUrl}/reset-password?redirect=${encodeURIComponent(window.location.origin)}`
+    }
+
     return (
         <Section title="Log in">
             <div className={"grid gap-6"}>
@@ -80,9 +85,9 @@ export const SignIn = () => {
                         </Button>
                         <div className="flex justify-center">
                             <Button variant="link">
-                                <Link to={AppPaths.RESET_PASSWORD}>
+                                <a href={getResetPasswordUrl()}>
                                     Forgot password?
-                                </Link>
+                                </a>
                             </Button>
                         </div>
                     </div>
