@@ -2,16 +2,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Auth, GoogleAuthProvider, ParsedToken, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import React, { PropsWithChildren, useContext, useEffect, useMemo } from "react";
+import { Environment } from '../environment/environment';
 import { User } from "../models/user";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD6ulCmv_WCGw1MIgLnAF8vn1_WWcz2RYg",
-    authDomain: "nw-users-auth-staging.firebaseapp.com",
-    projectId: "nw-users-auth-staging",
-    storageBucket: "nw-users-auth-staging.appspot.com",
-    messagingSenderId: "360373770580",
-    appId: "1:360373770580:web:fdfa43fa673f5dc84390c1"
-};
 
 interface ISignInParamsEmail {
     type: "email",
@@ -37,7 +29,7 @@ export const AuthContext = React.createContext<IAuthContext | null>(null)
 export function AuthProvider({ children }: PropsWithChildren) {
     const [user, setUser] = React.useState<User | undefined>(undefined)
     const [firebaseToken, setFirebaseToken] = React.useState<string>("")
-    const firebase = useMemo<FirebaseApp>(() => initializeApp(firebaseConfig), [])
+    const firebase = useMemo<FirebaseApp>(() => initializeApp(Environment.firebaseOptions), [])
     const firebaseAuth = useMemo<Auth>(() => {
         return getAuth(firebase)
     }, [firebase])
