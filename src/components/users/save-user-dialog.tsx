@@ -25,18 +25,19 @@ interface IProps {
 }
 
 export function SaveUserDialog({ user, onUserChanged }: IProps) {
-    const [name, setName] = useState(user?.name ?? '')
-    const [email, setEmail] = useState(user?.email ?? '')
-    const [_user, _setUser] = useState(user)
     const refDialogTrigger = useRef<HTMLButtonElement>(null)
     const { user: loggedUser } = useAuthContext()
     const { toast } = useToast()
     const { apiService } = useServiceContext()
     const { sources, roles } = useContext(DataContext)
-    const [selectedSources, setSelectedSources] = useState<string[]>(user?.sources?.map(source => source.code) ?? [])
     const [sourcesOptions, setSourcesOptions] = useState<{ label: string, value: string }[]>([])
     const [rolesOptions, setRolesOptions] = useState<{ label: string, value: string }[]>([])
+    const [name, setName] = useState(user?.name ?? '')
+    const [email, setEmail] = useState(user?.email ?? '')
+    const [_user, _setUser] = useState(user)
+    const [selectedSources, setSelectedSources] = useState<string[]>(user?.sources?.map(source => source.code) ?? [])
     const [selectedRoles, setSelectedRoles] = useState<string[]>(user?.roles?.map(role => role.id) ?? [])
+    const [active, setActive] = useState(user?.active ?? true)
 
     useEffect(() => {
         setSourcesOptions(sources.map(source => ({ label: source.name ? source.name : source.code, value: source.code })))
@@ -53,14 +54,11 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
             email,
             sources: selectedSources,
             roles: selectedRoles,
-            apiKey: _user?.apiKey ?? ""
+            apiKey: _user?.apiKey ?? "",
+            active
         }).then((modifiedUser) => {
             toast({ title: 'User saved' })
-            const shouldActivate = !_user
             _setUser(prev => ({ ...modifiedUser, apiKey: prev ? prev.apiKey : "" }))
-            if (shouldActivate) {
-                onActiveChange(true, modifiedUser)
-            }
             refDialogTrigger.current?.click()
         }).catch((e) => {
             toast({ title: `Failed to save user: ${e.message}`, variant: 'destructive' })
@@ -91,39 +89,6 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
         })
     }
 
-    const onActiveChange = (isActive: boolean, scopedUser?: User) => {
-        if (!scopedUser) {
-            scopedUser = _user
-        }
-
-        if (loggedUser?.id === scopedUser?.id && !isActive) {
-            toast({ title: 'You cannot deactivate yourself', variant: 'destructive' })
-            return
-        }
-
-        if (scopedUser) {
-            if (isActive) {
-                apiService.putApikey(scopedUser.id)
-                    .then((apikey) => {
-                        toast({ title: 'User activated' })
-                        _setUser({ ...scopedUser, apiKey: apikey })
-                    })
-                    .catch((e) => {
-                        toast({ title: `Failed to activate user: ${e.message}`, variant: 'destructive' })
-                    })
-            } else {
-                apiService.deleteApikey(scopedUser.id)
-                    .then(() => {
-                        toast({ title: 'User deactivated' })
-                        _setUser({ ...scopedUser, apiKey: "" })
-                    })
-                    .catch((e) => {
-                        toast({ title: `Failed to deactivate user: ${e.message}`, variant: 'destructive' })
-                    })
-            }
-        }
-    }
-
     useEffect(() => {
         _setUser(user)
     }, [user])
@@ -135,6 +100,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
         setSelectedSources(_user === undefined
             ? sources.map(source => source.code)
             : _user.sources?.map(source => source.code) ?? [])
+        setActive(_user?.active ?? true)
         if (_user) {
             onUserChanged(_user)
 
@@ -181,14 +147,14 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
                     <div className="flex justify-center">
                         <SelectDropdown disabled={_user?.id === loggedUser?.id} title="Roles" options={rolesOptions} values={selectedRoles} onValuesChange={setSelectedRoles} />
                     </div>
-                </div>
-                <DialogFooter>
                     {_user &&
-                        <div className="flex items-center space-x-2 flex-1">
-                            <Switch id="active" checked={!!_user?.apiKey} onCheckedChange={onActiveChange} />
-                            <Label htmlFor="active">Active</Label>
+                        <div className="flex justify-center">
+                            <Switch id="active" checked={active} onCheckedChange={setActive} />
+                            <Label htmlFor="active" className="flex items-center ml-1">Active</Label>
                         </div>
                     }
+                </div>
+                <DialogFooter>
                     {_user &&
                         <Button type="submit" variant={"destructive"} onClick={handleDelete}>Delete</Button>
                     }

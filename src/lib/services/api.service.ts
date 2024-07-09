@@ -1,7 +1,7 @@
 import { CategoryCode, RestHelper, RestResponse, SourceDetails } from "newsware";
 import { Environment } from '../environment/environment';
 import { PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PutCategoryCodeRequest } from "../models/category-code";
-import { GetUserRequest, PutApiKeyRequest, Role, SaveUserRequest, User } from "../models/user";
+import { GetUserRequest, Role, SaveUserRequest, User } from "../models/user";
 
 
 export class ApiService {
@@ -55,10 +55,6 @@ export class ApiService {
     await this.restHelper.delete('/admin/apikey', {
       userId,
     });
-  }
-
-  async putApikey(userId: number): Promise<string> {
-    return (await this.restHelper.put<PutApiKeyRequest, string>('/admin/api-key', { userId })).data
   }
 
   async getUserByApiKey(apikey: string): Promise<User> {
