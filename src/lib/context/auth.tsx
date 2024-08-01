@@ -81,7 +81,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
                     variant: "destructive"
                 })
                 return
+            } else if (error.code === "auth/popup-closed-by-user") {
+                return
             }
+
             toast({
                 description: error.message,
                 variant: "destructive"
