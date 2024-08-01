@@ -47,6 +47,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
                 setUser(undefined)
             }
         })
+
+        // TODO: Remove once Firebase fixes this issue:
+        // https://github.com/firebase/firebase-js-sdk/issues/8061
+        const originalSetTimeout = window.setTimeout;
+        (window as any).setTimeout = function (fn: TimerHandler, delay: number, ...args: any[]) {
+            if (delay === 8000) {
+                delay = 0
+            }
+            return originalSetTimeout(fn, delay, ...args)
+        }
     }, [])
 
     const getUserFromClaims = (claims: ParsedToken): User | undefined => {
