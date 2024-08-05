@@ -40,7 +40,7 @@ const defaultEnvironment: IEnvironment = {
 
 const stagingEnvironment: IEnvironment = {
   apiEndpointDescription: {
-    host: "nwapi-staging.encypherstudio.com",
+    host: "staging.api.newsware.com",
     websocketProtocol: "wss",
     restProtocol: "https"
   },
