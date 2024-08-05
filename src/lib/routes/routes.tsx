@@ -29,7 +29,7 @@ export const appRoutes: RouteObject[] = [
                         children: [
                             {
                                 path: AppPaths.HOME,
-                                element: <Navigate to={AppPaths.HOME} />,
+                                element: <Navigate to={AppPaths.USERS} />,
                             },
                             {
                                 path: AppPaths.USERS,

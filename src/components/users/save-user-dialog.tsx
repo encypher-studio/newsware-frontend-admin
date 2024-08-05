@@ -58,7 +58,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
             active
         }).then((modifiedUser) => {
             toast({ title: 'User saved' })
-            _setUser(prev => ({ ...modifiedUser, apiKey: prev ? prev.apiKey : "" }))
+            _setUser(modifiedUser)
             refDialogTrigger.current?.click()
         }).catch((e) => {
             toast({ title: `Failed to save user: ${e.message}`, variant: 'destructive' })

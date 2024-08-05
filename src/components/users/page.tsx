@@ -63,11 +63,19 @@ export function Users() {
             },
         },
         {
-            accessorKey: "apikey",
-            header: "Api Key",
+            accessorKey: "apiKey",
+            header: "Api Key"
+        },
+        {
+            accessorKey: "active",
+            header: "Active",
             cell: ({ row }) => {
                 const user = row.original
-                return user.apiKey ? user.apiKey : <div className="text-destructive">NOT ACTIVE</div>
+                return (
+                    user?.active
+                        ? <><span className="text-xs">&#x1F7E2;</span></>
+                        : <><span className="text-xs">&#x1F534;</span></>
+                )
             }
         },
         {
