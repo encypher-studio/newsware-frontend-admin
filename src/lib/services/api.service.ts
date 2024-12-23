@@ -1,7 +1,7 @@
-import { CategoryCode, RestHelper, RestResponse, SourceDetails } from "newsware";
-import { Environment } from '../environment/environment';
-import { PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PutCategoryCodeRequest } from "../models/category-code";
-import { GetUserRequest, Role, SaveUserRequest, User } from "../models/user";
+import { RestHelper, RestResponse, SourceDetails } from "newsware"
+import { Environment } from '../environment/environment'
+import { PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PutCategoryCodeRequest } from "../models/category-code"
+import { GetUserRequest, Role, SaveUserRequest, User } from "../models/user"
 
 
 export class ApiService {
@@ -13,14 +13,8 @@ export class ApiService {
     });
   }
 
-  async getCategoryCodes(source: string): Promise<RestResponse<CategoryCode[]>> {
-    return await this.restHelper.get<CategoryCode[]>('/category-codes', {
-      source
-    });
-  }
-
   async putCategoryCode(req: PutCategoryCodeRequest) {
-    await this.restHelper.put('/admin/category-codes', req);
+    await this.restHelper.put('/admin/codes', req);
   }
 
   async getUsers(req: GetUserRequest): Promise<RestResponse<User[]>> {
@@ -34,15 +28,15 @@ export class ApiService {
   }
 
   async createCategoryGroup(req: PutCategoryCodeRequest) {
-    await this.restHelper.post('/admin/category-codes/group', req);
+    await this.restHelper.post('/admin/codes/group', req);
   }
 
   async addCodeToCategoryGroup(req: PostCategoryCodeGroupAdd) {
-    await this.restHelper.post('/admin/category-codes/group/add', req);
+    await this.restHelper.post('/admin/codes/group/add', req);
   }
 
   async deleteCodeFromCategoryGroup(req: PostCategoryCodeGroupDelete) {
-    await this.restHelper.post('/admin/category-codes/group/delete', req);
+    await this.restHelper.post('/admin/codes/group/delete', req);
   }
 
   async deleteUser(userId: number) {

@@ -1,68 +1,43 @@
-import { CategoryCodes } from "@/components/category-codes/page"
-import Layout from "@/components/layout/page"
-import { SignIn } from "@/components/sign-in/page"
+import { Codes } from "@/components/codes/page"
 import { Sources } from "@/components/sources/page"
 import { Users } from "@/components/users/page"
-import { Navigate, Outlet, RouteObject, useRouteError } from "react-router-dom"
+import { IEnvironment, RouteOption } from "@newsware/ui"
+import { Navigate, Outlet } from "react-router-dom"
+import { DataProvider } from "../context/data"
+import { ServiceProvider } from "../context/service"
 import { AppPaths } from "./paths"
-import { ProtectedRoute } from "./protected-route"
-import { sidebarOptions } from "./sidebar-options"
 
-export const appRoutes: RouteObject[] = [
-    {
-        errorElement: <ErrorBoundary />,
-        children: [
-            {
-                element: <div className="py-6 px-6"><Outlet /></div>,
-                children: [
-                    {
-                        element: <SignIn />,
-                        path: AppPaths.SIGN_IN,
-                    }
-                ]
-            },
-            {
-                element: <ProtectedRoute />,
-                children: [
-                    {
-                        element: <Layout sidebarOptions={sidebarOptions} />,
-                        children: [
-                            {
-                                path: AppPaths.HOME,
-                                element: <Navigate to={AppPaths.USERS} />,
-                            },
-                            {
-                                path: AppPaths.USERS,
-                                element: <Users />,
-                            },
-                            {
-                                path: AppPaths.CATEGORY_CODES,
-                                element: <CategoryCodes />,
-                            },
-                            {
-                                path: AppPaths.SOURCES,
-                                element: <Sources />,
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+export const appRoutes = (environment: IEnvironment): RouteOption[] => [
+  {
+    title: "",
+    element: (
+      <ServiceProvider>
+        <DataProvider>
+          <Outlet />
+        </DataProvider>
+      </ServiceProvider>
+    ),
+    children: [
+      {
+        title: "Home",
+        path: AppPaths.HOME,
+        element: <Navigate to={AppPaths.USERS} />,
+      },
+      {
+        title: "Users",
+        path: AppPaths.USERS,
+        element: <Users />,
+      },
+      {
+        title: "Codes",
+        path: AppPaths.CODES,
+        element: <Codes />,
+      },
+      {
+        title: "Sources",
+        path: AppPaths.SOURCES,
+        element: <Sources />,
+      },
+    ],
+  },
 ]
-
-function ErrorBoundary() {
-    let error = useRouteError() as any
-
-    return error
-        ? <>
-            <div>Something went wrong </div>
-            <div> {
-                error.data
-                    ? error.data
-                    : error.message
-                        ? error.message
-                        : ""
-            }</div>
-        </> : <Outlet />
-}

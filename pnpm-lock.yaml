@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@newsware/ui':
+        specifier: ../newsware-ui
+        version: link:../newsware-ui
       '@radix-ui/react-accordion':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -63,8 +66,8 @@ importers:
         specifier: ^10.12.2
         version: 10.12.2
       newsware:
-        specifier: 10.0.0-beta.24
-        version: 10.0.0-beta.24(ws@8.17.0)
+        specifier: 10.0.9
+        version: 10.0.9(ws@8.17.0)
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -1766,8 +1769,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  newsware@10.0.0-beta.24:
-    resolution: {integrity: sha512-IRDL30oH74CSHLB6EkKXQUn40lwxFDEsJ9rZDHpw1IZ+0M58iXU6/nUN1kQAjPDiWVKabbfjHXC2iXrIJ6qRxg==}
+  newsware@10.0.9:
+    resolution: {integrity: sha512-Pi89sWXUOx1GZYfDkdwM5tTNbuWLPe7WLJbjxq1oOH3uEPDKjmDG4bSe7iDUJQnbwARxB/p61hX+UQ+1YWhnPA==}
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -4017,7 +4020,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  newsware@10.0.0-beta.24(ws@8.17.0):
+  newsware@10.0.9(ws@8.17.0):
     dependencies:
       isomorphic-fetch: 3.0.0
       isomorphic-ws: 5.0.0(ws@8.17.0)
