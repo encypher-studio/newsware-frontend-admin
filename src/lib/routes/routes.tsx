@@ -22,6 +22,7 @@ export const appRoutes = (environment: IEnvironment): RouteOption[] => [
         title: "Home",
         path: AppPaths.HOME,
         element: <Navigate to={AppPaths.USERS} />,
+        excludeFromSidebar: true,
       },
       {
         title: "Users",

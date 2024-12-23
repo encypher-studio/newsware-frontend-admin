@@ -13,6 +13,7 @@ export interface ChildrenCategoryCode {
 
 export interface PutCategoryCodeRequest {
   code: string
+  type: string
   description: string
 }
 

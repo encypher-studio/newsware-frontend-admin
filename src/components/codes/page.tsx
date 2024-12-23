@@ -4,6 +4,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Label,
   Select,
   SelectContent,
   SelectGroup,
@@ -11,27 +12,38 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  Separator,
 } from "@newsware/ui"
-import { useContext, useState } from "react"
+import { CodeType } from "newsware"
+import { useContext, useEffect, useState } from "react"
 import { DataContext } from "../../lib/context/data"
 import Section from "../section/section"
 import { CodesTable } from "./codes-table"
-import { SaveCategoryCodeDialog } from "./save-codes-dialog"
+import { SaveCodeDialog } from "./save-codes-dialog"
 
 export function Codes() {
-  const { sourceCodes, sources } = useContext(DataContext)
-  const [selectedSource, setSelectedSource] = useState<string>()
+  const { sourceCodes, sources, ensureCodes } = useContext(DataContext)
+  const [selectedSource, setSelectedSource] = useState<string>("dj")
+  const [selectedType, setSelectedType] = useState<CodeType>()
 
-  if (sourceCodes.length > 0) {
+  useEffect(() => {
+    if (selectedSource && selectedType) {
+      ensureCodes(selectedSource, selectedType)
+    }
+  }, [selectedSource, selectedType])
+
+  if (Object.keys(sourceCodes).length > 0) {
     return (
       <Section title="Codes">
         <h3> Curated codes</h3>
-        {sourceCodes[0].length !== undefined && (
+        {sourceCodes["group"]?.group !== undefined && (
           <CodesTable
-            codes={sourceCodes[0]}
-            headerOptions={<SaveCategoryCodeDialog />}
+            codes={sourceCodes["group"].group}
+            headerOptions={<SaveCodeDialog />}
           />
         )}
+        <Separator className="mt-6 mb-3" />
+        <Label className="mb-2">Select a source</Label>
         <Select value={selectedSource} onValueChange={setSelectedSource}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select a source" />
@@ -47,19 +59,27 @@ export function Codes() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Accordion className="mt-6" type="single" collapsible>
-          {sourceCodes.map((codes, i) => {
-            if (i === 0 || codes.length == 0) return null
-            return (
-              <AccordionItem key={codes[0].source} value={codes[0].source}>
-                <AccordionTrigger>{codes[0].source}</AccordionTrigger>
-                <AccordionContent>
-                  <CodesTable codes={codes} />
-                </AccordionContent>
-              </AccordionItem>
-            )
-          })}
-        </Accordion>
+        {selectedSource && (
+          <Accordion
+            type="single"
+            collapsible
+            onValueChange={(v) => setSelectedType(v as CodeType)}
+            value={selectedType}
+          >
+            {[CodeType.CATEGORY, CodeType.INDUSTRY, CodeType.REGION].map(
+              (typ) => (
+                <AccordionItem key={typ} value={typ}>
+                  <AccordionTrigger>{typ}</AccordionTrigger>
+                  <AccordionContent>
+                    <CodesTable
+                      codes={sourceCodes[selectedSource]?.[typ] ?? []}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            )}
+          </Accordion>
+        )}
       </Section>
     )
   }

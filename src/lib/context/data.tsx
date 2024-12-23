@@ -6,27 +6,35 @@ import { PropsWithChildren, createContext, useEffect, useState } from "react"
 import { Environment } from "../environment/environment"
 import { Role } from "../models/user"
 
+type sourceCodes = {
+  [source: string]: {
+    [codeType in CodeType]?: Code[]
+  }
+}
+
 interface IDataContext {
   selectedGroupCode?: Code
   setSelectedGroupCode: (categoryCode?: Code) => void
   editChildCode: (categoryCode: Code, remove: boolean) => void
-  sourceCodes: Code[][]
-  onCategoryCodeChanged: (categoryCode: Code, isDelete?: boolean) => void
+  sourceCodes: sourceCodes
+  onCodeChanged: (categoryCode: Code, isDelete?: boolean) => void
   setSelectedCode: (categoryCode?: Code) => void
-  selectedCategoryCode: Code | undefined
+  selectedCode: Code | undefined
   sources: SourceDetails[]
   roles: Role[]
+  ensureCodes: (source: string, codeType: CodeType) => void
 }
 
 export const DataContext = createContext<IDataContext>({
   setSelectedGroupCode: () => {},
   editChildCode: () => {},
-  sourceCodes: [],
-  onCategoryCodeChanged: () => {},
+  sourceCodes: {},
+  onCodeChanged: () => {},
   setSelectedCode: () => {},
-  selectedCategoryCode: undefined,
+  selectedCode: undefined,
   sources: [],
   roles: [],
+  ensureCodes: (source: string, codeType: CodeType) => {},
 })
 
 export const DataProvider = ({ children }: PropsWithChildren) => {
@@ -37,7 +45,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
   const { toast } = useToast()
   const { apiService } = useServiceContext()
   const [sources, setSources] = useState<SourceDetails[]>([])
-  const [sourceCodes, setSourceCodes] = useState<Code[][]>([])
+  const [sourceCodes, setSourceCodes] = useState<sourceCodes>({})
   const [roles, setRoles] = useState<Role[]>([])
 
   useEffect(() => {
@@ -47,15 +55,12 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     ;(async () => {
-      const sourceCodes = []
+      let sourceCodes: sourceCodes = {}
       for (const source of sources) {
-        sourceCodes.push(
-          await Api.getCodes(
-            source.code,
-            CodeType.CATEGORY,
-            Environment.apiEndpointDescription
-          )
-        )
+        sourceCodes = {
+          ...sourceCodes,
+          [source.code]: {},
+        }
       }
 
       const groupCodes = await Api.getCodes(
@@ -64,9 +69,31 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
         Environment.apiEndpointDescription
       )
 
-      setSourceCodes([groupCodes, ...sourceCodes])
+      setSourceCodes({
+        ...sourceCodes,
+        group: {
+          [CodeType.GROUP]: groupCodes,
+        },
+      })
     })()
   }, [sources])
+
+  const ensureCodes = async (source: string, codeType: CodeType) => {
+    if (sourceCodes[source]?.[codeType] === undefined) {
+      const codes = await Api.getCodes(
+        source,
+        codeType,
+        Environment.apiEndpointDescription
+      )
+      setSourceCodes({
+        ...sourceCodes,
+        [source]: {
+          ...sourceCodes[source],
+          [codeType]: codes,
+        },
+      })
+    }
+  }
 
   const setSelectedGroupCode = (categoryCode?: Code) => {
     _setSelectedGroupCode(categoryCode)
@@ -88,30 +115,35 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
     }
   }
 
-  const onCategoryCodeChanged = (categoryCode: Code, isDelete?: boolean) => {
-    const newSourceCodes = [...sourceCodes]
+  const onCodeChanged = (code: Code, isDelete?: boolean) => {
+    code.source = code.source ? code.source : "group"
+    const newSourceCodes = { ...sourceCodes }
 
-    const sourceIndex = newSourceCodes.findIndex(
-      (s) => s[0].source === categoryCode.source
-    )
-
-    if (isDelete) {
-      newSourceCodes[sourceIndex].filter((c) => c.code !== categoryCode.code)
-      return newSourceCodes
+    if (newSourceCodes[code.source]?.[code.type] === undefined) {
+      return
     }
 
-    const categoryCodeIndex = newSourceCodes[sourceIndex].findIndex(
-      (c) => c.code === categoryCode.code
-    )
-    if (categoryCodeIndex === -1) {
-      newSourceCodes[sourceIndex] = [
-        categoryCode,
-        ...newSourceCodes[sourceIndex],
-      ]
-    } else {
-      newSourceCodes[sourceIndex] = newSourceCodes[sourceIndex].map((c, i) =>
-        i === categoryCodeIndex ? categoryCode : c
+    if (isDelete) {
+      newSourceCodes[code.source][code.type]!!.filter(
+        (c) => c.code !== code.code
       )
+    } else {
+      const codeIndex = newSourceCodes[code.source][code.type]!!.findIndex(
+        (c) => {
+          console.log(c)
+          return c.code === code.code
+        }
+      )
+      if (codeIndex === -1) {
+        newSourceCodes[code.source][code.type] = [
+          code,
+          ...newSourceCodes[code.source][code.type]!!,
+        ]
+      } else {
+        newSourceCodes[code.source][code.type] = newSourceCodes[code.source][
+          code.type
+        ]!!.map((c, i) => (i === codeIndex ? code : c))
+      }
     }
 
     setSourceCodes(newSourceCodes)
@@ -139,7 +171,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
             ),
           }
           setSelectedGroupCode(newCode)
-          onCategoryCodeChanged(newCode)
+          onCodeChanged(newCode)
         })
         .catch((e) => {
           toast({
@@ -171,7 +203,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
             children: [...selectedGroupCode!.children, categoryCode],
           }
           setSelectedGroupCode(newCode)
-          onCategoryCodeChanged(newCode)
+          onCodeChanged(newCode)
         })
         .catch((e) => {
           toast({
@@ -193,12 +225,13 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
         selectedGroupCode,
         setSelectedGroupCode,
         editChildCode,
-        onCategoryCodeChanged,
+        onCodeChanged,
         sourceCodes,
-        selectedCategoryCode: selectedCode,
+        selectedCode: selectedCode,
         setSelectedCode: setSelectedCode,
         sources,
         roles,
+        ensureCodes,
       }}
     >
       {children}

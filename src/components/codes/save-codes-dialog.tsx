@@ -11,42 +11,44 @@ import {
   Label,
   useToast,
 } from "@newsware/ui"
+import { CodeType } from "newsware"
 import { useContext, useEffect, useRef, useState } from "react"
 import { DataContext } from "../../lib/context/data"
 
-export function SaveCategoryCodeDialog() {
-  const { selectedCategoryCode, onCategoryCodeChanged } =
+export function SaveCodeDialog() {
+  const { selectedCode, onCodeChanged: onCategoryCodeChanged } =
     useContext(DataContext)
-  const [code, setCode] = useState(selectedCategoryCode?.code ?? "")
+  const [code, setCode] = useState(selectedCode?.code ?? "")
   const [description, setDescription] = useState(
-    selectedCategoryCode?.description ?? ""
+    selectedCode?.description ?? ""
   )
-  const [_categoryCode, _setCategoryCode] = useState(selectedCategoryCode)
+  const [_code, _setCode] = useState(selectedCode)
   const refDialogTrigger = useRef<HTMLButtonElement>(null)
   const { toast } = useToast()
   const { apiService } = useServiceContext()
 
   useEffect(() => {
-    _setCategoryCode(selectedCategoryCode)
-  }, [selectedCategoryCode])
+    _setCode(selectedCode)
+  }, [selectedCode])
 
   useEffect(() => {
-    setCode(_categoryCode?.code ?? "")
-    setDescription(_categoryCode?.description ?? "")
-    if (_categoryCode) {
-      onCategoryCodeChanged(_categoryCode)
+    setCode(_code?.code ?? "")
+    setDescription(_code?.description ?? "")
+    if (_code) {
+      onCategoryCodeChanged(_code)
 
       if (refDialogTrigger.current) {
         refDialogTrigger.current.click()
       }
     }
-  }, [_categoryCode])
+  }, [_code])
 
   const handleSubmit = () => {
-    if (!selectedCategoryCode) {
+    if (!selectedCode) {
       apiService
         .createCategoryGroup({
           code: code,
+          type: CodeType.GROUP,
           description: description,
         })
         .then(() => {
@@ -66,11 +68,12 @@ export function SaveCategoryCodeDialog() {
     apiService
       .putCategoryCode({
         code: code,
+        type: _code!!.type,
         description: description,
       })
       .then(() => {
         toast({ title: "Category code saved" })
-        _setCategoryCode((prev) => ({ ...prev!!, code, description }))
+        _setCode((prev) => ({ ...prev!!, code, description }))
       })
       .catch((e) => {
         toast({
@@ -91,7 +94,7 @@ export function SaveCategoryCodeDialog() {
         variant="outline"
         onClick={(e) => {
           e.preventDefault()
-          _setCategoryCode(undefined)
+          _setCode(undefined)
           refDialogTrigger.current?.click()
         }}
       >
@@ -100,7 +103,7 @@ export function SaveCategoryCodeDialog() {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {_categoryCode ? "Edit category code" : "Create category code"}
+            {_code ? "Edit category code" : "Create category code"}
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -109,7 +112,7 @@ export function SaveCategoryCodeDialog() {
               Code
             </Label>
             <Input
-              disabled={!!selectedCategoryCode}
+              disabled={!!selectedCode}
               id="code"
               value={code}
               className="col-span-3"
@@ -129,7 +132,7 @@ export function SaveCategoryCodeDialog() {
           </div>
         </div>
         <DialogFooter>
-          {_categoryCode && (
+          {_code && (
             <Button
               type="submit"
               variant={"destructive"}
