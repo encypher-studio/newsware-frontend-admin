@@ -7,7 +7,7 @@ import { DataProvider } from "../context/data"
 import { ServiceProvider } from "../context/service"
 import { AppPaths } from "./paths"
 
-export const appRoutes = (environment: IEnvironment): RouteOption[] => [
+export const appRoutes = (_: IEnvironment): RouteOption[] => [
   {
     title: "",
     element: (

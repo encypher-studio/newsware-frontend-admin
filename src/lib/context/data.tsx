@@ -34,7 +34,7 @@ export const DataContext = createContext<IDataContext>({
   selectedCode: undefined,
   sources: [],
   roles: [],
-  ensureCodes: (source: string, codeType: CodeType) => {},
+  ensureCodes: () => {},
 })
 
 export const DataProvider = ({ children }: PropsWithChildren) => {
