@@ -1,7 +1,7 @@
 
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthContext } from "../context/auth";
 import { AppPaths } from "./paths";
+import { useAuthContext } from "@newsware/ui";
 
 export const ProtectedRoute = () => {
     const { user } = useAuthContext()
