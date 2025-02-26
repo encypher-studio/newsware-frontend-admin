@@ -1,7 +1,7 @@
-import { ISidebarOption } from "@/components/layout/sidebar/sidebar";
+import { RouteOption } from "@newsware/ui";
 import { AppPaths } from "./paths";
 
-export const sidebarOptions: ISidebarOption[] = [
+export const sidebarOptions: RouteOption[] = [
   {
     title: "Users",
     path: AppPaths.USERS,
