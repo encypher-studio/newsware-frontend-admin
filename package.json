@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "export VITE_ENV=staging && vite",
-    "dev-win": "set VITE_ENV=staging&&vite",
+    "dev:win": "set VITE_ENV=staging&&vite",
     "build:staging": "export VITE_ENV=staging && tsc && vite build",
     "build": "export VITE_ENV=production && tsc && vite build",
+    "build:win": "set VITE_ENV=production&&tsc&&vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
