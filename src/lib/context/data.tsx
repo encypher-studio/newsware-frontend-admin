@@ -2,7 +2,7 @@ import { useServiceContext } from "@/lib/context/service"
 import { useToast } from "@newsware/ui"
 import { ToastAction } from "@radix-ui/react-toast"
 import { Api, Code, CodeType, SourceDetails } from "newsware"
-import { PropsWithChildren, createContext, useEffect, useState } from "react"
+import { createContext, PropsWithChildren, useEffect, useState } from "react"
 import { Environment } from "../environment/environment"
 import { Role } from "../models/user"
 
@@ -34,7 +34,7 @@ export const DataContext = createContext<IDataContext>({
   selectedCode: undefined,
   sources: [],
   roles: [],
-  ensureCodes: () => {},
+  ensureCodes: () => {}
 })
 
 export const DataProvider = ({ children }: PropsWithChildren) => {
@@ -59,7 +59,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
       for (const source of sources) {
         sourceCodes = {
           ...sourceCodes,
-          [source.code]: {},
+          [source.code]: {}
         }
       }
 
@@ -72,8 +72,8 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
       setSourceCodes({
         ...sourceCodes,
         group: {
-          [CodeType.GROUP]: groupCodes,
-        },
+          [CodeType.GROUP]: groupCodes
+        }
       })
     })()
   }, [sources])
@@ -89,8 +89,8 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
         ...sourceCodes,
         [source]: {
           ...sourceCodes[source],
-          [codeType]: codes,
-        },
+          [codeType]: codes
+        }
       })
     }
   }
@@ -110,7 +110,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
             Finish
           </ToastAction>
         ),
-        duration: 1000 * 1000,
+        duration: 1000 * 1000
       })
     }
   }
@@ -137,7 +137,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
       if (codeIndex === -1) {
         newSourceCodes[code.source][code.type] = [
           code,
-          ...newSourceCodes[code.source][code.type]!!,
+          ...newSourceCodes[code.source][code.type]!!
         ]
       } else {
         newSourceCodes[code.source][code.type] = newSourceCodes[code.source][
@@ -154,7 +154,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
       apiService
         .deleteCodeFromCategoryGroup({
           parentCode: selectedGroupCode!.code,
-          child: categoryCode,
+          child: categoryCode
         })
         .then(() => {
           toast({
@@ -162,13 +162,13 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
               "Removed " +
               categoryCode.code +
               " from group " +
-              selectedGroupCode!.code,
+              selectedGroupCode!.code
           })
           const newCode = {
             ...selectedGroupCode!!,
             children: selectedGroupCode!.children.filter(
               (child) => child.code !== categoryCode.code
-            ),
+            )
           }
           setSelectedGroupCode(newCode)
           onCodeChanged(newCode)
@@ -181,14 +181,14 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
               " from group " +
               selectedGroupCode!.code +
               ": " +
-              e.message,
+              e.message
           })
         })
     } else {
       apiService
         .addCodeToCategoryGroup({
           parentCode: selectedGroupCode!.code,
-          child: categoryCode,
+          child: categoryCode
         })
         .then(() => {
           toast({
@@ -196,11 +196,11 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
               "Added " +
               categoryCode.code +
               " to group " +
-              selectedGroupCode!.code,
+              selectedGroupCode!.code
           })
           const newCode = {
             ...selectedGroupCode!!,
-            children: [...selectedGroupCode!.children, categoryCode],
+            children: [...selectedGroupCode!.children, categoryCode]
           }
           setSelectedGroupCode(newCode)
           onCodeChanged(newCode)
@@ -213,7 +213,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
               " to group " +
               selectedGroupCode!.code +
               ": " +
-              e.message,
+              e.message
           })
         })
     }
@@ -231,7 +231,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
         setSelectedCode: setSelectedCode,
         sources,
         roles,
-        ensureCodes,
+        ensureCodes
       }}
     >
       {children}
