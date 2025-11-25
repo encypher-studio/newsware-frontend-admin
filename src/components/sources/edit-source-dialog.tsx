@@ -8,43 +8,45 @@ import {
   DialogTitle,
   Input,
   Label,
-  useToast,
+  useToast
 } from "@newsware/ui"
 import { SourceDetails } from "newsware"
-import { PropsWithChildren, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 interface IProps {
   source: SourceDetails
   onSourceChanged: (source: SourceDetails) => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function EditSourceDialog({
   source,
   onSourceChanged,
-  children,
-}: PropsWithChildren<IProps>) {
+  open,
+  onOpenChange = () => {}
+}: IProps) {
   const [name, setName] = useState(source?.name ?? "")
   const [description, setDescription] = useState(source?.description ?? "")
   const { toast } = useToast()
   const { apiService } = useServiceContext()
-  const [open, setOpen] = useState(false)
 
   const handleSubmit = () => {
     apiService
       .putSource({
         code: source.code,
         name: name,
-        description: description,
+        description: description
       })
       .then(() => {
         toast({ title: "Source updated" })
         onSourceChanged({ ...source, name, description })
-        setOpen(false)
+        onOpenChange(false)
       })
       .catch((e) => {
         toast({
           title: `Failed to update source: ${e.message}`,
-          variant: "destructive",
+          variant: "destructive"
         })
       })
   }
@@ -55,8 +57,7 @@ export function EditSourceDialog({
   }, [source])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {children}
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit source</DialogTitle>
