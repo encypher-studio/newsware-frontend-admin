@@ -1,20 +1,20 @@
-import {DataContext} from "@/lib/context/data"
+import { DataContext } from "@/lib/context/data"
 import {
-    Button,
-    ColumnDef,
-    DataTable,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
+  Button,
+  ColumnDef,
+  DataTable,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@newsware/ui"
-import {DotsHorizontalIcon} from "@radix-ui/react-icons"
-import {SourceDetails} from "newsware"
-import {useContext, useMemo, useState} from "react"
+import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+import { SourceDetails } from "newsware"
+import { useContext, useMemo, useState } from "react"
 import Section from "../section/section"
-import {EditSourceDialog} from "./edit-source-dialog"
+import { EditSourceDialog } from "./edit-source-dialog"
 
 export function Sources() {
   const { sources } = useContext(DataContext)
