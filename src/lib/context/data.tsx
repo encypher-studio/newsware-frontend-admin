@@ -4,7 +4,7 @@ import { ToastAction } from "@radix-ui/react-toast"
 import { Api, Code, CodeType, SourceDetails } from "newsware"
 import { createContext, PropsWithChildren, useEffect, useState } from "react"
 import { Environment } from "../environment/environment"
-import { Role } from "../models/user"
+import { Plan, Role } from "../models/user"
 
 type sourceCodes = {
   [source: string]: {
@@ -22,6 +22,7 @@ interface IDataContext {
   selectedCode: Code | undefined
   sources: SourceDetails[]
   roles: Role[]
+  plans: Plan[]
   ensureCodes: (source: string, codeType: CodeType) => void
 }
 
@@ -34,6 +35,7 @@ export const DataContext = createContext<IDataContext>({
   selectedCode: undefined,
   sources: [],
   roles: [],
+  plans: [],
   ensureCodes: () => {}
 })
 
@@ -47,9 +49,11 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
   const [sources, setSources] = useState<SourceDetails[]>([])
   const [sourceCodes, setSourceCodes] = useState<sourceCodes>({})
   const [roles, setRoles] = useState<Role[]>([])
+  const [plans, setPlans] = useState<Plan[]>([])
 
   useEffect(() => {
     apiService.getRoles().then(setRoles)
+    apiService.getPlans().then(setPlans)
     Api.getSources(Environment.apiEndpointDescription).then(setSources)
   }, [])
 
@@ -231,6 +235,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
         setSelectedCode: setSelectedCode,
         sources,
         roles,
+        plans,
         ensureCodes
       }}
     >

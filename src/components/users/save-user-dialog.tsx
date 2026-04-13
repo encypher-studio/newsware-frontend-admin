@@ -9,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Dropdown,
+  DropdownItem,
   Input,
   Label,
   Switch,
@@ -29,13 +31,14 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
   const { user: loggedUser } = useAuthContext()
   const { toast } = useToast()
   const { apiService } = useServiceContext()
-  const { sources, roles } = useContext(DataContext)
+  const { sources, roles, plans } = useContext(DataContext)
   const [sourcesOptions, setSourcesOptions] = useState<
     { label: string; value: string }[]
   >([])
   const [rolesOptions, setRolesOptions] = useState<
     { label: string; value: string }[]
   >([])
+  const [plansOptions, setPlansOptions] = useState<DropdownItem<number>[]>([])
   const [name, setName] = useState(user?.name ?? "")
   const [email, setEmail] = useState(user?.email ?? "")
   const [_user, _setUser] = useState(user)
@@ -44,6 +47,9 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
   )
   const [selectedRoles, setSelectedRoles] = useState<string[]>(
     user?.roles?.map((role) => role.id) ?? []
+  )
+  const [selectedPlanId, setSelectedPlanId] = useState<number | undefined>(
+    user?.planId
   )
   const [active, setActive] = useState(user?.active ?? true)
 
@@ -60,6 +66,10 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     setRolesOptions(roles.map((role) => ({ label: role.id, value: role.id })))
   }, [roles])
 
+  useEffect(() => {
+    setPlansOptions(plans.map((plan) => ({ label: plan.name, value: plan.id })))
+  }, [plans])
+
   const handleSubmit = () => {
     apiService
       .saveUser({
@@ -70,6 +80,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
         roles: selectedRoles,
         apiKey: _user?.apiKey ?? "",
         active,
+        planId: selectedPlanId,
       })
       .then((modifiedUser) => {
         toast({ title: "User saved" })
@@ -132,6 +143,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
         ? sources.map((source) => source.code)
         : _user.sources?.map((source) => source.code) ?? []
     )
+    setSelectedPlanId(_user?.planId)
     setActive(_user?.active ?? true)
     if (_user) {
       onUserChanged(_user)
@@ -199,6 +211,14 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
               options={rolesOptions}
               values={selectedRoles}
               onValuesChange={setSelectedRoles}
+            />
+          </div>
+          <div className="flex justify-center">
+            <Dropdown
+              label="Plan"
+              items={plansOptions}
+              value={selectedPlanId}
+              onChange={setSelectedPlanId}
             />
           </div>
           {_user && (

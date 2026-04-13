@@ -1,7 +1,7 @@
 import { RestHelper, RestResponse, SourceDetails } from "newsware"
 import { Environment } from '../environment/environment'
 import { PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PutCategoryCodeRequest } from "../models/category-code"
-import { GetUserRequest, Role, SaveUserRequest, User } from "../models/user"
+import { GetUserRequest, Plan, Role, SaveUserRequest, User } from "../models/user"
 
 
 export class ApiService {
@@ -61,5 +61,9 @@ export class ApiService {
 
   async getRoles(): Promise<Role[]> {
     return (await this.restHelper.get<Role[]>('/admin/roles')).data;
+  }
+
+  async getPlans(): Promise<Plan[]> {
+    return (await this.restHelper.get<Plan[]>('/admin/plans')).data;
   }
 }
