@@ -9,8 +9,8 @@ import {
   DialogTrigger,
   Input,
   Label,
-  useToast,
 } from "@newsware/ui"
+import { toast } from "sonner"
 import { CodeType } from "newsware"
 import { useContext, useEffect, useRef, useState } from "react"
 import { DataContext } from "../../lib/context/data"
@@ -24,7 +24,6 @@ export function SaveCodeDialog() {
   )
   const [_code, _setCode] = useState(selectedCode)
   const refDialogTrigger = useRef<HTMLButtonElement>(null)
-  const { toast } = useToast()
   const { apiService } = useServiceContext()
 
   useEffect(() => {
@@ -52,15 +51,12 @@ export function SaveCodeDialog() {
           description: description,
         })
         .then(() => {
-          toast({ title: "Category code created" })
+          toast.success("Category code created")
           setCode("")
           setDescription("")
         })
         .catch((e) => {
-          toast({
-            title: `Failed to create category code: ${e.message}`,
-            variant: "destructive",
-          })
+          toast.error(`Failed to create category code: ${e.message}`)
         })
       return
     }
@@ -72,14 +68,11 @@ export function SaveCodeDialog() {
         description: description,
       })
       .then(() => {
-        toast({ title: "Category code saved" })
+        toast.success("Category code saved")
         _setCode((prev) => ({ ...prev!!, code, description }))
       })
       .catch((e) => {
-        toast({
-          title: `Failed to save user: ${e.message}`,
-          variant: "destructive",
-        })
+        toast.error(`Failed to save user: ${e.message}`)
       })
   }
 

@@ -10,14 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
   Dropdown,
-  DropdownItem,
   Input,
   Label,
+  SelectOption,
   Switch,
-  useAuthContext,
-  useToast,
+  useAuthContext
 } from "@newsware/ui"
-import { ToastAction } from "@radix-ui/react-toast"
+import { toast } from "sonner"
 import { useContext, useEffect, useRef, useState } from "react"
 import { DataContext } from "../../lib/context/data"
 
@@ -29,7 +28,6 @@ interface IProps {
 export function SaveUserDialog({ user, onUserChanged }: IProps) {
   const refDialogTrigger = useRef<HTMLButtonElement>(null)
   const { user: loggedUser } = useAuthContext()
-  const { toast } = useToast()
   const { apiService } = useServiceContext()
   const { sources, roles, plans } = useContext(DataContext)
   const [sourcesOptions, setSourcesOptions] = useState<
@@ -38,7 +36,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
   const [rolesOptions, setRolesOptions] = useState<
     { label: string; value: string }[]
   >([])
-  const [plansOptions, setPlansOptions] = useState<DropdownItem<number>[]>([])
+  const [plansOptions, setPlansOptions] = useState<SelectOption<number>[]>([])
   const [name, setName] = useState(user?.name ?? "")
   const [email, setEmail] = useState(user?.email ?? "")
   const [_user, _setUser] = useState(user)
@@ -57,7 +55,7 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     setSourcesOptions(
       sources.map((source) => ({
         label: source.name ? source.name : source.code,
-        value: source.code,
+        value: source.code
       }))
     )
   }, [sources])
@@ -67,7 +65,13 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
   }, [roles])
 
   useEffect(() => {
-    setPlansOptions(plans.map((plan) => ({ label: plan.name, value: plan.id })))
+    setPlansOptions(
+      plans.map((plan) => ({
+        label: `${plan.name.charAt(0).toUpperCase() + plan.name.slice(1)} (${plan.historyMonths} month history)`,
+        value: String(plan.id),
+        data: plan.id
+      }))
+    )
   }, [plans])
 
   const handleSubmit = () => {
@@ -80,18 +84,15 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
         roles: selectedRoles,
         apiKey: _user?.apiKey ?? "",
         active,
-        planId: selectedPlanId,
+        planId: selectedPlanId
       })
       .then((modifiedUser) => {
-        toast({ title: "User saved" })
+        toast.success("User saved")
         _setUser(modifiedUser)
         refDialogTrigger.current?.click()
       })
       .catch((e) => {
-        toast({
-          title: `Failed to save user: ${e.message}`,
-          variant: "destructive",
-        })
+        toast.error(`Failed to save user: ${e.message}`)
       })
   }
 
@@ -99,34 +100,26 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     if (!_user) {
       return
     } else if (loggedUser?.id === _user.id) {
-      toast({ title: "You cannot delete yourself", variant: "destructive" })
+      toast.error("You cannot delete yourself")
       return
     }
 
-    toast({
-      title: "Confirm deletion",
-      action: (
-        <ToastAction
-          altText="Try again"
-          onClick={() => {
-            apiService
-              .deleteUser(_user.id)
-              .then(() => {
-                toast({ title: "User deleted" })
-                onUserChanged(_user, true)
-                refDialogTrigger.current?.click()
-              })
-              .catch((e) => {
-                toast({
-                  title: `Failed to delete user: ${e.message}`,
-                  variant: "destructive",
-                })
-              })
-          }}
-        >
-          Confirm
-        </ToastAction>
-      ),
+    toast("Confirm deletion", {
+      action: {
+        label: "Confirm",
+        onClick: () => {
+          apiService
+            .deleteUser(_user.id)
+            .then(() => {
+              toast.success("User deleted")
+              onUserChanged(_user, true)
+              refDialogTrigger.current?.click()
+            })
+            .catch((e) => {
+              toast.error(`Failed to delete user: ${e.message}`)
+            })
+        }
+      }
     })
   }
 
@@ -141,9 +134,9 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
     setSelectedSources(
       _user === undefined
         ? sources.map((source) => source.code)
-        : _user.sources?.map((source) => source.code) ?? []
+        : (_user.sources?.map((source) => source.code) ?? [])
     )
-    setSelectedPlanId(_user?.planId)
+    setSelectedPlanId(_user?.planId ?? plans[0]?.id)
     setActive(_user?.active ?? true)
     if (_user) {
       onUserChanged(_user)
@@ -213,13 +206,15 @@ export function SaveUserDialog({ user, onUserChanged }: IProps) {
               onValuesChange={setSelectedRoles}
             />
           </div>
-          <div className="flex justify-center">
-            <Dropdown
-              label="Plan"
-              items={plansOptions}
-              value={selectedPlanId}
-              onChange={setSelectedPlanId}
-            />
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Plan</Label>
+            <div className="col-span-3">
+              <Dropdown
+                items={plansOptions}
+                value={selectedPlanId !== undefined ? String(selectedPlanId) : ""}
+                onChange={(option) => setSelectedPlanId(option.data)}
+              />
+            </div>
           </div>
           {_user && (
             <div className="flex justify-center">

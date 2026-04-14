@@ -14,8 +14,8 @@ import {
   Input,
   PaginationState,
   SortingState,
-  useToast,
 } from "@newsware/ui"
+import { toast } from "sonner"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { RestResponse } from "newsware"
 import { useEffect, useMemo, useState } from "react"
@@ -36,7 +36,6 @@ export function Users() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: true },
   ])
-  const { toast } = useToast()
   const userColumns = useMemo<ColumnDef<User>[]>(
     () => [
       {
@@ -203,7 +202,7 @@ export function Users() {
         },
       })
       .then(handleGetUsers)
-      .catch((e) => toast({ title: e.message, variant: "destructive" }))
+      .catch((e) => toast.error(e.message))
   }
 
   const handleGetUsers = (response: RestResponse<User[]>) => {

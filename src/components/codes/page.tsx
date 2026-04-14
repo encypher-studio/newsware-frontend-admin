@@ -51,7 +51,7 @@ export function Codes() {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Sources</SelectLabel>
-              {sources.map((source) => (
+              {sources.filter((s) => s.code).map((source) => (
                 <SelectItem key={source.code} value={source.code}>
                   {source.name ? source.name : source.code}
                 </SelectItem>

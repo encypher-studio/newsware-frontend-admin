@@ -1,6 +1,5 @@
 import { useServiceContext } from "@/lib/context/service"
-import { useToast } from "@newsware/ui"
-import { ToastAction } from "@radix-ui/react-toast"
+import { toast } from "sonner"
 import { Api, Code, CodeType, SourceDetails } from "newsware"
 import { createContext, PropsWithChildren, useEffect, useState } from "react"
 import { Environment } from "../environment/environment"
@@ -44,7 +43,6 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
     undefined
   )
   const [selectedCode, setSelectedCode] = useState<Code | undefined>(undefined)
-  const { toast } = useToast()
   const { apiService } = useServiceContext()
   const [sources, setSources] = useState<SourceDetails[]>([])
   const [sourceCodes, setSourceCodes] = useState<sourceCodes>({})
@@ -102,19 +100,14 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
   const setSelectedGroupCode = (categoryCode?: Code) => {
     _setSelectedGroupCode(categoryCode)
     if (categoryCode) {
-      toast({
-        title: "Editing group " + categoryCode.code,
-        action: (
-          <ToastAction
-            altText="Finish"
-            onClick={() => {
-              _setSelectedGroupCode(undefined)
-            }}
-          >
-            Finish
-          </ToastAction>
-        ),
-        duration: 1000 * 1000
+      toast("Editing group " + categoryCode.code, {
+        action: {
+          label: "Finish",
+          onClick: () => {
+            _setSelectedGroupCode(undefined)
+          },
+        },
+        duration: 1000 * 1000,
       })
     }
   }
@@ -161,13 +154,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
           child: categoryCode
         })
         .then(() => {
-          toast({
-            title:
-              "Removed " +
-              categoryCode.code +
-              " from group " +
-              selectedGroupCode!.code
-          })
+          toast.success("Removed " + categoryCode.code + " from group " + selectedGroupCode!.code)
           const newCode = {
             ...selectedGroupCode!!,
             children: selectedGroupCode!.children.filter(
@@ -178,15 +165,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
           onCodeChanged(newCode)
         })
         .catch((e) => {
-          toast({
-            title:
-              "Failed to remove " +
-              categoryCode.code +
-              " from group " +
-              selectedGroupCode!.code +
-              ": " +
-              e.message
-          })
+          toast.error("Failed to remove " + categoryCode.code + " from group " + selectedGroupCode!.code + ": " + e.message)
         })
     } else {
       apiService
@@ -195,13 +174,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
           child: categoryCode
         })
         .then(() => {
-          toast({
-            title:
-              "Added " +
-              categoryCode.code +
-              " to group " +
-              selectedGroupCode!.code
-          })
+          toast.success("Added " + categoryCode.code + " to group " + selectedGroupCode!.code)
           const newCode = {
             ...selectedGroupCode!!,
             children: [...selectedGroupCode!.children, categoryCode]
@@ -210,15 +183,7 @@ export const DataProvider = ({ children }: PropsWithChildren) => {
           onCodeChanged(newCode)
         })
         .catch((e) => {
-          toast({
-            title:
-              "Failed to add " +
-              categoryCode.code +
-              " to group " +
-              selectedGroupCode!.code +
-              ": " +
-              e.message
-          })
+          toast.error("Failed to add " + categoryCode.code + " to group " + selectedGroupCode!.code + ": " + e.message)
         })
     }
   }

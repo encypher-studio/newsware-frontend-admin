@@ -1,15 +1,6 @@
 import { useServiceContext } from "@/lib/context/service"
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Input,
-  Label,
-  useToast
-} from "@newsware/ui"
+import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, Input, Label } from "@newsware/ui"
+import { toast } from "sonner"
 import { SourceDetails } from "newsware"
 import { useEffect, useState } from "react"
 
@@ -28,7 +19,6 @@ export function EditSourceDialog({
 }: IProps) {
   const [name, setName] = useState(source?.name ?? "")
   const [description, setDescription] = useState(source?.description ?? "")
-  const { toast } = useToast()
   const { apiService } = useServiceContext()
 
   const handleSubmit = () => {
@@ -39,15 +29,12 @@ export function EditSourceDialog({
         description: description
       })
       .then(() => {
-        toast({ title: "Source updated" })
+        toast.success("Source updated")
         onSourceChanged({ ...source, name, description })
         onOpenChange(false)
       })
       .catch((e) => {
-        toast({
-          title: `Failed to update source: ${e.message}`,
-          variant: "destructive"
-        })
+        toast.error(`Failed to update source: ${e.message}`)
       })
   }
 
