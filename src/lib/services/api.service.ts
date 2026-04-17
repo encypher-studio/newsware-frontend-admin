@@ -1,6 +1,7 @@
 import { RestHelper, RestResponse, SourceDetails } from "newsware"
 import { Environment } from '../environment/environment'
 import { PostCategoryCodeGroupAdd, PostCategoryCodeGroupDelete, PutCategoryCodeRequest } from "../models/category-code"
+import { Topic } from "../models/topic"
 import { GetUserRequest, Plan, Role, SaveUserRequest, User } from "../models/user"
 
 
@@ -65,5 +66,17 @@ export class ApiService {
 
   async getPlans(): Promise<Plan[]> {
     return (await this.restHelper.get<Plan[]>('/admin/plans')).data;
+  }
+
+  async getTopics(): Promise<Topic[]> {
+    return (await this.restHelper.get<Topic[]>('/admin/topics')).data;
+  }
+
+  async putTopic(topic: Partial<Topic>): Promise<Topic> {
+    return (await this.restHelper.put<Partial<Topic>, Topic>('/admin/topics', topic)).data;
+  }
+
+  async deleteTopic(id: number): Promise<void> {
+    await this.restHelper.delete('/admin/topics', { id });
   }
 }

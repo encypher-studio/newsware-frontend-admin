@@ -1,5 +1,6 @@
 import { Codes } from "@/components/codes/page"
 import { Sources } from "@/components/sources/page"
+import { Topics } from "@/components/topics/page"
 import { Users } from "@/components/users/page"
 import { IEnvironment, RouteOption } from "@newsware/ui"
 import { Navigate, Outlet } from "react-router-dom"
@@ -38,6 +39,11 @@ export const appRoutes = (_: IEnvironment): RouteOption[] => [
         title: "Sources",
         path: AppPaths.SOURCES,
         element: <Sources />,
+      },
+      {
+        title: "Topics",
+        path: AppPaths.TOPICS,
+        element: <Topics />,
       },
     ],
   },
